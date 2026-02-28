@@ -49,6 +49,13 @@ header {
     padding: 32px 0 28px;
 }
 
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
 .logo {
     font-size: 2rem;
     font-weight: 700;
@@ -611,6 +618,142 @@ header {
     color: var(--text-muted);
     font-size: 0.85rem;
     font-style: italic;
+}
+
+/* ===== MODAL ===== */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 420px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 0;
+}
+
+.modal-header h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 20px 24px 24px;
+    text-align: center;
+}
+
+.modal-logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--purple);
+}
+
+.modal-logo span {
+    color: var(--teal);
+}
+
+.modal-version {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.modal-desc {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 12px;
+    line-height: 1.5;
+}
+
+.modal-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+}
+
+.modal-credits {
+    text-align: left;
+}
+
+.modal-credits h3 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    margin-top: 12px;
+}
+
+.modal-credits h3:first-child {
+    margin-top: 0;
+}
+
+.modal-credits p {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.modal-credits a {
+    color: var(--teal);
+    text-decoration: none;
+}
+
+.modal-credits a:hover {
+    text-decoration: underline;
+}
+
+.modal-credits ul {
+    list-style: none;
+    padding: 0;
+}
+
+.modal-credits ul li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 3px 0;
+}
+
+.modal-credits ul li a {
+    color: var(--teal);
+    text-decoration: none;
+}
+
+.modal-credits ul li a:hover {
+    text-decoration: underline;
+}
+
+.modal-footer-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.modal-footer-text a {
+    color: var(--purple-hover);
+    text-decoration: none;
+}
+
+.modal-footer-text a:hover {
+    text-decoration: underline;
 }
 
 /* ===== RESPONSIVE ===== */

@@ -104,6 +104,18 @@ function initListeners() {
         document.getElementById('event-log').innerHTML = '';
     });
 
+    // Info modal
+    const modal = document.getElementById('info-modal');
+    document.getElementById('btn-info').addEventListener('click', () => {
+        modal.style.display = 'flex';
+    });
+    document.getElementById('btn-close-modal').addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.style.display = 'none';
+    });
+
     handleAuthCallback();
 }
 
