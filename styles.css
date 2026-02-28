@@ -742,6 +742,32 @@ header {
     text-decoration: underline;
 }
 
+.credit-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.credit-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--purple);
+}
+
+.credit-name-purple {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--purple-hover);
+    text-decoration: none;
+}
+
+.credit-name-purple:hover {
+    color: var(--purple);
+    text-decoration: underline;
+}
+
 .modal-footer-text {
     font-size: 0.8rem;
     color: var(--text-muted);
