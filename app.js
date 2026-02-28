@@ -3,7 +3,7 @@
 const CONFIG = {
     SERVER_URL: window.location.origin,
     TWITCH_CLIENT_ID: atob('Y3BheHZvc3czcXdsc3YzeDhhOHd1eHUyamwwZzho'),
-    TWITCH_REDIRECT_URI: 'http://localhost:3000',
+    TWITCH_REDIRECT_URI: 'https://7tvrewards-production.up.railway.app',
     SEVENTV_API_BASE: 'https://7tv.io/v3',
     SCOPES: 'channel:manage:redemptions user:read:email user:write:chat'
 };
