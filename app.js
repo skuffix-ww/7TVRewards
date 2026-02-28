@@ -1616,6 +1616,7 @@ function toggleTroubleshooting() {
 // ==================== LOGO EASTER EGG ====================
 
 let logoAnimationInterval = null;
+let logoAnimationTimeout = null;
 
 function initLogoEasterEgg() {
     const logo = document.getElementById('main-logo');
@@ -1629,12 +1630,11 @@ function initLogoEasterEgg() {
 
         if (logoAnimationInterval) {
             clearInterval(logoAnimationInterval);
+            clearTimeout(logoAnimationTimeout);
             logoAnimationInterval = null;
-            logo.style.background = '';
-            logo.style.webkitBackgroundClip = '';
-            logo.style.backgroundClip = '';
-            logo.style.backgroundSize = '';
-            logo.style.color = '';
+            logoAnimationTimeout = null;
+            logo.classList.remove('logo-animating');
+            logo.style.backgroundImage = '';
             log('Анимация логотипа остановлена', 'info');
             return;
         }
@@ -1643,35 +1643,43 @@ function initLogoEasterEgg() {
 
         const emotes = state.allSetEmotes;
         let emoteIndex = 0;
+        let opacity = 0;
+        let fadingIn = true;
 
+        logo.classList.add('logo-animating');
+
+        // Плавное появление первого эмоута
+        const firstEmote = emotes[0];
+        logo.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://cdn.7tv.app/emote/${firstEmote.id}/2x.webp)`;
+        
         // Быстрая смена фона (переливание)
         logoAnimationInterval = setInterval(() => {
             const emote = emotes[emoteIndex % emotes.length];
             emoteIndex++;
 
-            logo.style.background = `url(https://cdn.7tv.app/emote/${emote.id}/1x.webp)`;
-            logo.style.backgroundSize = 'cover';
-            logo.style.backgroundPosition = 'center';
-            logo.style.webkitBackgroundClip = 'padding-box';
-            logo.style.backgroundClip = 'padding-box';
-            logo.style.position = 'relative';
+            // Плавное затухание
+            logo.style.transition = 'opacity 0.08s ease';
+            logo.style.opacity = '0.3';
 
-            // Полупрозрачный оверлей для читаемости текста
-            const overlay = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7))`;
-            logo.style.backgroundImage = `${overlay}, url(https://cdn.7tv.app/emote/${emote.id}/1x.webp)`;
-        }, 150);
+            setTimeout(() => {
+                // Смена фона
+                logo.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://cdn.7tv.app/emote/${emote.id}/2x.webp)`;
+                // Плавное появление
+                logo.style.opacity = '1';
+            }, 80);
+        }, 120);
 
         // Авто-остановка через 5 секунд
-        setTimeout(() => {
+        logoAnimationTimeout = setTimeout(() => {
             if (logoAnimationInterval) {
                 clearInterval(logoAnimationInterval);
+                clearTimeout(logoAnimationTimeout);
                 logoAnimationInterval = null;
-                logo.style.background = '';
+                logoAnimationTimeout = null;
+                logo.classList.remove('logo-animating');
                 logo.style.backgroundImage = '';
-                logo.style.backgroundSize = '';
-                logo.style.backgroundPosition = '';
-                logo.style.webkitBackgroundClip = '';
-                logo.style.backgroundClip = '';
+                logo.style.opacity = '';
+                logo.style.transition = '';
                 log('5 секунд прошло! Возвращаем как было', 'info');
             }
         }, 5000);

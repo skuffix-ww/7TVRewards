@@ -219,11 +219,35 @@ header {
     color: var(--purple);
     letter-spacing: -0.5px;
     cursor: pointer;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    background-size: cover;
+    background-position: center;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    position: relative;
 }
 
 .logo:hover {
     opacity: 0.8;
+}
+
+.logo.logo-animating {
+    animation: logo-bounce 0.15s ease-in-out infinite;
+}
+
+@keyframes logo-bounce {
+    0%, 100% {
+        transform: scale(1) translateY(0);
+    }
+    25% {
+        transform: scale(1.05) translateY(-2px);
+    }
+    50% {
+        transform: scale(0.98) translateY(1px);
+    }
+    75% {
+        transform: scale(1.02) translateY(-1px);
+    }
 }
 
 .logo span {
