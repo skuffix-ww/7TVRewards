@@ -694,15 +694,19 @@ async function addEmoteToSet(emote) {
         return;
     }
 
+    // Обновляем набор перед проверкой дубликатов
+    try {
+        const freshRes = await fetch(`${CONFIG.SEVENTV_API_BASE}/emote-sets/${state.emoteSetId}`);
+        if (freshRes.ok) {
+            const freshData = await freshRes.json();
+            state.allSetEmotes = freshData.emotes || [];
+        }
+    } catch (_) { /* используем кэш */ }
+
     // Проверка дубликатов в наборе
     const duplicateById = state.allSetEmotes.find(e => e.id === emote.id);
-    const duplicateByName = state.allSetEmotes.find(e => e.name === emote.name && e.id !== emote.id);
     if (duplicateById) {
         log(`Эмоут "${emote.name}" уже есть в наборе!`, 'warning');
-        return false;
-    }
-    if (duplicateByName) {
-        log(`Эмоут с именем "${emote.name}" уже есть в наборе (${duplicateByName.id})!`, 'warning');
         return false;
     }
 
@@ -725,14 +729,36 @@ async function addEmoteToSet(emote) {
         // Убираем дубликат из очереди если уже есть
         state.activeEmotes = state.activeEmotes.filter(e => e.id !== emote.id);
 
-        // Добавляем новый
+        // Добавляем новый — с ретраем при конфликте имён
         log(`Добавление: ${emote.name}...`, 'info');
-        await addEmoteToSetAPI(emote.id, emote.name);
+        let addedName = emote.name;
+        let success = false;
 
-        state.activeEmotes.push({ id: emote.id, name: emote.name });
+        for (let attempt = 0; attempt < 5; attempt++) {
+            const nameToUse = attempt === 0 ? emote.name : `${emote.name}_${attempt + 1}`;
+            try {
+                await addEmoteToSetAPI(emote.id, nameToUse);
+                addedName = nameToUse;
+                success = true;
+                break;
+            } catch (err) {
+                if (err.message && err.message.includes('conflicting name') && attempt < 4) {
+                    log(`Имя "${nameToUse}" занято, пробую "${emote.name}_${attempt + 2}"...`, 'warning');
+                    continue;
+                }
+                throw err; // другая ошибка или последняя попытка
+            }
+        }
+
+        if (!success) {
+            throw new Error('Не удалось добавить эмоут после нескольких попыток');
+        }
+
+        state.activeEmotes.push({ id: emote.id, name: addedName });
         saveState();
 
-        log(`Эмоут "${emote.name}" добавлен!${state.slotsDisabled ? '' : ` (${state.activeEmotes.length}/${state.maxEmoteSlots})`}`, 'success');
+        const suffix = addedName !== emote.name ? ` (как "${addedName}")` : '';
+        log(`Эмоут "${emote.name}" добавлен${suffix}!${state.slotsDisabled ? '' : ` (${state.activeEmotes.length}/${state.maxEmoteSlots})`}`, 'success');
         await loadEmoteSet();
         updateActiveEmotesDisplay();
 
