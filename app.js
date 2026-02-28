@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initListeners();
     checkAuth();
     startCountdown();
+    startFloatingEmotes();
 });
 
 function loadState() {
@@ -190,15 +191,22 @@ function initListeners() {
         if (e.target === changelog) changelog.style.display = 'none';
     });
 
+    // Version archive
+    const versionArchiveModal = document.getElementById('version-archive-modal');
+    document.getElementById('btn-version-archive').addEventListener('click', () => {
+        document.getElementById('info-modal').style.display = 'none';
+        renderVersionArchive();
+        versionArchiveModal.style.display = 'flex';
+    });
+    document.getElementById('btn-close-version-archive').addEventListener('click', () => {
+        versionArchiveModal.style.display = 'none';
+    });
+    versionArchiveModal.addEventListener('click', (e) => {
+        if (e.target === versionArchiveModal) versionArchiveModal.style.display = 'none';
+    });
+
     // Beta modal
     const betaModal = document.getElementById('beta-modal');
-    document.getElementById('btn-beta-activate-cl').addEventListener('click', () => {
-        if (state.betaEnabled) {
-            deactivateBeta();
-        } else {
-            betaModal.style.display = 'flex';
-        }
-    });
     document.getElementById('btn-close-beta-modal').addEventListener('click', () => {
         betaModal.style.display = 'none';
     });
@@ -1173,14 +1181,12 @@ function applyVersionDisplay(version) {
 }
 
 function updateBetaButton(active) {
-    const btn = document.getElementById('btn-beta-activate-cl');
-    if (!btn) return;
-    if (active) {
-        btn.innerHTML = '<span class="beta-symbol">β</span> Деактивировать бету';
-        btn.classList.add('deactivate');
-    } else {
-        btn.innerHTML = '<span class="beta-symbol">β</span> Активировать v1.4.0β';
-        btn.classList.remove('deactivate');
+    // Кнопка теперь в архиве версий, не в changelog
+    // Стилизуем иконку архива если бета активна
+    const archiveBtn = document.getElementById('btn-version-archive');
+    if (archiveBtn) {
+        archiveBtn.style.color = active ? 'var(--purple-hover)' : '';
+        archiveBtn.style.borderColor = active ? 'var(--purple)' : '';
     }
 }
 
@@ -1209,7 +1215,7 @@ function activateBeta(reauth = false) {
 function deactivateBeta() {
     state.betaEnabled = false;
     saveState();
-    applyVersionDisplay('v1.3.0');
+    applyVersionDisplay('v1.3.1');
     updateBetaButton(false);
     document.getElementById('dashboard-section').style.display = 'none';
     log('Бета деактивирована', 'info');
@@ -1454,4 +1460,111 @@ function formatDuration(seconds) {
     if (seconds < 3600) return `${Math.floor(seconds / 60)} мин`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)} ч`;
     return `${Math.floor(seconds / 86400)} д`;
+}
+
+// ==================== АРХИВ ВЕРСИЙ ====================
+
+const VERSION_ARCHIVE = [
+    {
+        id: 'v1.4.0b',
+        name: 'v1.4.0β',
+        desc: 'Дашборд: история эмоутов, модерация (бан/мут/блок), статистика, лидерборд',
+        badge: 'beta',
+        isBeta: true,
+        activate: () => {
+            document.getElementById('version-archive-modal').style.display = 'none';
+            document.getElementById('beta-modal').style.display = 'flex';
+        },
+        deactivate: () => {
+            deactivateBeta();
+            renderVersionArchive();
+        },
+        isActive: () => state.betaEnabled
+    }
+    // Можно добавлять новые версии сюда в будущем
+];
+
+function renderVersionArchive() {
+    const container = document.getElementById('version-archive-list');
+    container.innerHTML = VERSION_ARCHIVE.map(v => {
+        const active = v.isActive();
+        const badgeClass = v.badge === 'beta' ? 'badge-beta' : 'badge-info';
+
+        let btnHtml;
+        if (active) {
+            btnHtml = `<button class="va-btn va-btn-deactivate" data-va-action="deactivate" data-va-id="${v.id}">Деактивировать</button>`;
+        } else {
+            btnHtml = `<button class="va-btn va-btn-activate" data-va-action="activate" data-va-id="${v.id}">Активировать</button>`;
+        }
+
+        return `<div class="version-archive-item${active ? ' active' : ''}">
+            <div class="va-info">
+                <span class="va-name"><span class="badge ${badgeClass}" style="margin-right:6px;">${v.name}</span>${active ? '✓ Активна' : ''}</span>
+                <span class="va-desc">${v.desc}</span>
+            </div>
+            ${btnHtml}
+        </div>`;
+    }).join('');
+
+    // Event delegation
+    container.querySelectorAll('[data-va-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.vaId;
+            const action = btn.dataset.vaAction;
+            const version = VERSION_ARCHIVE.find(v => v.id === id);
+            if (!version) return;
+            if (action === 'activate') version.activate();
+            else if (action === 'deactivate') version.deactivate();
+        });
+    });
+}
+
+// ==================== ЛЕТАЮЩИЕ ЭМОУТЫ ====================
+
+let floatingInterval = null;
+
+function startFloatingEmotes() {
+    if (floatingInterval) clearInterval(floatingInterval);
+
+    // Спавним каждые 2-4 секунды
+    floatingInterval = setInterval(spawnFloatingEmote, 3000);
+    // Сразу несколько
+    setTimeout(spawnFloatingEmote, 500);
+    setTimeout(spawnFloatingEmote, 1500);
+}
+
+function spawnFloatingEmote() {
+    const emotes = state.allSetEmotes;
+    if (!emotes || emotes.length === 0) return;
+
+    const container = document.getElementById('floating-emotes');
+    if (!container) return;
+
+    // Ограничиваем кол-во одновременных
+    if (container.children.length > 15) return;
+
+    const randomEmote = emotes[Math.floor(Math.random() * emotes.length)];
+    const img = document.createElement('img');
+    img.className = 'floating-emote';
+    img.src = `https://cdn.7tv.app/emote/${randomEmote.id}/2x.webp`;
+    img.alt = '';
+    img.width = 48;
+    img.height = 48;
+
+    // Рандомная позиция по X
+    img.style.left = Math.random() * 90 + 5 + '%';
+    // Рандомная длительность
+    const duration = 10 + Math.random() * 10; // 10-20 sec
+    img.style.setProperty('--float-duration', duration + 's');
+    // Рандомный размер
+    const scale = 0.6 + Math.random() * 0.8;
+    img.style.width = (48 * scale) + 'px';
+    img.style.height = (48 * scale) + 'px';
+
+    container.appendChild(img);
+
+    // Удаляем после анимации
+    setTimeout(() => {
+        if (img.parentNode) img.remove();
+    }, duration * 1000 + 500);
 }
