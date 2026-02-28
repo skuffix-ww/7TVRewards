@@ -218,6 +218,12 @@ header {
     font-weight: 700;
     color: var(--purple);
     letter-spacing: -0.5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.logo:hover {
+    opacity: 0.8;
 }
 
 .logo span {
@@ -1148,6 +1154,11 @@ header {
     color: var(--yellow);
 }
 
+.changelog-list li.cl-info::before {
+    content: 'ℹ';
+    color: var(--purple-hover);
+}
+
 .changelog-list li.cl-change::before {
     content: '↻';
     color: var(--purple-hover);
@@ -1165,6 +1176,153 @@ header {
 
 .modal-footer-text a:hover {
     text-decoration: underline;
+}
+
+/* ===== TROUBLESHOOTING ===== */
+
+.troubleshooting-section {
+    padding: 16px 24px;
+    margin-top: 8px;
+}
+
+.troubleshooting-card {
+    max-width: 800px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(255, 165, 0, 0.08), rgba(255, 100, 0, 0.06));
+    border: 1px solid rgba(255, 165, 0, 0.2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.troubleshooting-card.open {
+    border-color: rgba(255, 165, 0, 0.3);
+    background: linear-gradient(135deg, rgba(255, 165, 0, 0.1), rgba(255, 100, 0, 0.08));
+}
+
+.troubleshooting-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.troubleshooting-header:hover {
+    background: rgba(255, 165, 0, 0.05);
+}
+
+.troubleshooting-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 165, 0, 0.15);
+    border-radius: var(--radius-sm);
+    color: #ffa500;
+}
+
+.troubleshooting-title {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.troubleshooting-title h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.troubleshooting-arrow {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+}
+
+.troubleshooting-card.open .troubleshooting-arrow {
+    transform: rotate(180deg);
+}
+
+.troubleshooting-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+}
+
+.troubleshooting-body.open {
+    max-height: 500px;
+    transition: max-height 0.5s ease-in;
+}
+
+.troubleshooting-content {
+    padding: 0 20px 20px;
+}
+
+.troubleshooting-content p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.troubleshooting-note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid rgba(255, 165, 0, 0.4);
+}
+
+.troubleshooting-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.troubleshooting-list li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 4px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.troubleshooting-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: #ffa500;
+}
+
+.troubleshooting-list strong {
+    color: var(--text-primary);
+}
+
+@media (max-width: 600px) {
+    .troubleshooting-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .troubleshooting-icon {
+        margin: 0 auto;
+    }
+
+    .troubleshooting-list li {
+        padding-left: 0;
+    }
+
+    .troubleshooting-list li::before {
+        display: none;
+    }
 }
 
 /* ===== FOOTER ===== */

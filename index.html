@@ -15,7 +15,7 @@
     <div class="container">
         <header>
             <div class="header-row">
-                <div class="logo">7TV<span>Rewards</span></div>
+                <div class="logo" id="main-logo">7TV<span>Rewards</span></div>
                 <button id="btn-changelog" class="btn btn-icon" title="Патч-ноуты">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -77,7 +77,7 @@
                 <div class="modal-body">
                     <div class="modal-logo">7TV<span>Rewards</span></div>
                     <div class="modal-version-row">
-                        <p class="modal-version" id="modal-version">v1.3.1</p>
+                        <p class="modal-version" id="modal-version">v1.3.3</p>
                         <button id="btn-version-archive" class="btn-archive" title="Архив версий">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -148,13 +148,25 @@
                 <div class="modal-body changelog-body">
                     <div class="changelog-entry">
                         <div class="changelog-version">
-                            <span class="badge badge-beta">v1.4.0β</span>
+                            <span class="badge badge-beta">v2.0.0β</span>
                             <span class="changelog-date">01.03.2026</span>
                         </div>
                         <ul class="changelog-list">
                             <li class="cl-new">Дашборд: история эмоутов, модерация (бан, мут, блок), статистика</li>
                             <li class="cl-new">Лидерборд зрителей по потраченным баллам</li>
                             <li class="cl-new">Активация через Архив версий (иконка в модалке «О приложении»)</li>
+                            <li class="cl-info">Патч-ноут будет пополняться с добавлением новых функций в v2.0.0β</li>
+                        </ul>
+                    </div>
+                    <div class="changelog-entry">
+                        <div class="changelog-version">
+                            <span class="badge badge-info">v1.3.3</span>
+                            <span class="changelog-date">01.03.2026</span>
+                        </div>
+                        <ul class="changelog-list">
+                            <li class="cl-fix">Исправлен устаревший кэш state.allSetEmotes — проверка на дубликаты теперь сверяется с актуальным набором</li>
+                            <li class="cl-fix">Добавлен ретрай при ошибке conflicting name — добавляется суффикс через параметр name</li>
+                            <li class="cl-new">Добавлена секция «Не работает 7TV?» с рекомендациями по решению проблем (VPN, прокси)</li>
                         </ul>
                     </div>
                     <div class="changelog-entry">
@@ -164,7 +176,7 @@
                         </div>
                         <ul class="changelog-list">
                             <li class="cl-new">Летающие эмоуты на фоне сайта из выбранного пака</li>
-                            <li class="cl-new">Архив версий — переключение между версиями (v1.4.0β)</li>
+                            <li class="cl-new">Архив версий — переключение между версиями (v2.0.0β)</li>
                         </ul>
                     </div>
                     <div class="changelog-entry">
@@ -471,10 +483,41 @@
         </section>
     </div>
 
+    <!-- Не работает 7TV? -->
+    <section class="troubleshooting-section">
+        <div class="troubleshooting-card">
+            <div class="troubleshooting-header" onclick="toggleTroubleshooting()">
+                <div class="troubleshooting-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                </div>
+                <div class="troubleshooting-title">
+                    <h3>Не работает 7TV?</h3>
+                    <span class="troubleshooting-arrow">▼</span>
+                </div>
+            </div>
+            <div id="troubleshooting-content" class="troubleshooting-body">
+                <div class="troubleshooting-content">
+                    <p>Если вы сталкиваетесь с проблемами при работе с 7TV (эмоуты не загружаются, не добавляются в набор, API возвращает ошибки) — к сожалению, мы не можем это исправить напрямую.</p>
+                    <p class="troubleshooting-note">7TV — это сторонний сервис, и его доступность зависит от множества факторов: блокировки по регионам, временные сбои на стороне сервера, ограничения сети или провайдера.</p>
+                    <p>Что можно попробовать:</p>
+                    <ul class="troubleshooting-list">
+                        <li><strong>VPN</strong> — смените регион подключения для обхода возможных блокировок</li>
+                        <li><strong>Прокси</strong> — используйте прокси-сервер для стабильного соединения с API 7TV</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-divider"></div>
-        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.3.1</span></p>
+        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.3.3</span></p>
         <p class="footer-legal">Данный сервис не является официальным продуктом Twitch Interactive, Inc. или 7TV. Все
             торговые марки принадлежат их владельцам. Twitch, логотип Twitch и Channel Points являются товарными знаками
             Twitch Interactive, Inc. 7TV является независимым сервисом эмоутов.</p>
@@ -522,7 +565,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p class="beta-version-badge">v1.4.0β</p>
+                <p class="beta-version-badge">v2.0.0β</p>
                 <p class="beta-warning-text">Это нестабильная бета-версия с новыми функциями: дашборд с историей
                     эмоутов, модерация пользователей и статистика.</p>
                 <p class="beta-warning-text">Для работы <b>мута чата</b> необходимо <b>перерегистрироваться</b> с

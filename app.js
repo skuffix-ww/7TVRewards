@@ -29,7 +29,7 @@ const state = {
     searchQuery: '',
     searchPage: 1,
     searchHasMore: false,
-    // beta v1.4.0β
+    // beta v2.0.0β
     betaEnabled: false,
     rewardCost: 0,
     emoteHistory: [],        // [{id, userId, userName, emoteId, emoteName, timestamp, cost}] — cap 500
@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
     startCountdown();
     startFloatingEmotes();
+    initLogoEasterEgg();
 });
 
 function loadState() {
@@ -77,7 +78,7 @@ function loadState() {
         if (!Array.isArray(state.emoteHistory)) state.emoteHistory = [];
         if (!state.userModeration || typeof state.userModeration !== 'object') state.userModeration = {};
         if (state.betaEnabled) {
-            applyVersionDisplay('v1.4.0β');
+            applyVersionDisplay('v2.0.0β');
             document.getElementById('dashboard-section').style.display = 'block';
             updateBetaButton(true);
             renderDashboard();
@@ -1196,7 +1197,7 @@ function startCountdown() {
     setInterval(update, 1000);
 }
 
-// ==================== БЕТА v1.4.0β ====================
+// ==================== БЕТА v2.0.0β ====================
 
 function applyVersionDisplay(version) {
     const modalVer = document.getElementById('modal-version');
@@ -1219,12 +1220,12 @@ function updateBetaButton(active) {
 function activateBeta(reauth = false) {
     state.betaEnabled = true;
     saveState();
-    applyVersionDisplay('v1.4.0β');
+    applyVersionDisplay('v2.0.0β');
     updateBetaButton(true);
     document.getElementById('dashboard-section').style.display = 'block';
     renderDashboard();
     document.getElementById('beta-modal').style.display = 'none';
-    log('Бета v1.4.0β активирована!', 'success');
+    log('Бета v2.0.0β активирована!', 'success');
 
     if (reauth) {
         // Добавляем channel:moderate и перерегистрируемся
@@ -1241,7 +1242,7 @@ function activateBeta(reauth = false) {
 function deactivateBeta() {
     state.betaEnabled = false;
     saveState();
-    applyVersionDisplay('v1.3.1');
+    applyVersionDisplay('v1.3.3');
     updateBetaButton(false);
     document.getElementById('dashboard-section').style.display = 'none';
     log('Бета деактивирована', 'info');
@@ -1492,8 +1493,8 @@ function formatDuration(seconds) {
 
 const VERSION_ARCHIVE = [
     {
-        id: 'v1.4.0b',
-        name: 'v1.4.0β',
+        id: 'v2.0.0b',
+        name: 'v2.0.0β',
         desc: 'Дашборд: история эмоутов, модерация (бан/мут/блок), статистика, лидерборд',
         badge: 'beta',
         isBeta: true,
@@ -1593,4 +1594,86 @@ function spawnFloatingEmote() {
     setTimeout(() => {
         if (img.parentNode) img.remove();
     }, duration * 1000 + 500);
+}
+
+// ==================== TROUBLESHOOTING ====================
+
+function toggleTroubleshooting() {
+    const card = document.querySelector('.troubleshooting-card');
+    const body = document.getElementById('troubleshooting-content');
+    if (card && body) {
+        const isOpen = card.classList.contains('open');
+        if (isOpen) {
+            body.classList.remove('open');
+            card.classList.remove('open');
+        } else {
+            body.classList.add('open');
+            card.classList.add('open');
+        }
+    }
+}
+
+// ==================== LOGO EASTER EGG ====================
+
+let logoAnimationInterval = null;
+
+function initLogoEasterEgg() {
+    const logo = document.getElementById('main-logo');
+    if (!logo) return;
+
+    logo.addEventListener('click', () => {
+        if (!state.allSetEmotes || state.allSetEmotes.length === 0) {
+            log('Сначала выберите набор эмоутов!', 'warn');
+            return;
+        }
+
+        if (logoAnimationInterval) {
+            clearInterval(logoAnimationInterval);
+            logoAnimationInterval = null;
+            logo.style.background = '';
+            logo.style.webkitBackgroundClip = '';
+            logo.style.backgroundClip = '';
+            logo.style.backgroundSize = '';
+            logo.style.color = '';
+            log('Анимация логотипа остановлена', 'info');
+            return;
+        }
+
+        log('Погнали! Кликни ещё раз чтобы остановить', 'success');
+
+        const emotes = state.allSetEmotes;
+        let emoteIndex = 0;
+
+        // Быстрая смена фона (переливание)
+        logoAnimationInterval = setInterval(() => {
+            const emote = emotes[emoteIndex % emotes.length];
+            emoteIndex++;
+
+            logo.style.background = `url(https://cdn.7tv.app/emote/${emote.id}/1x.webp)`;
+            logo.style.backgroundSize = 'cover';
+            logo.style.backgroundPosition = 'center';
+            logo.style.webkitBackgroundClip = 'padding-box';
+            logo.style.backgroundClip = 'padding-box';
+            logo.style.position = 'relative';
+
+            // Полупрозрачный оверлей для читаемости текста
+            const overlay = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7))`;
+            logo.style.backgroundImage = `${overlay}, url(https://cdn.7tv.app/emote/${emote.id}/1x.webp)`;
+        }, 150);
+
+        // Авто-остановка через 5 секунд
+        setTimeout(() => {
+            if (logoAnimationInterval) {
+                clearInterval(logoAnimationInterval);
+                logoAnimationInterval = null;
+                logo.style.background = '';
+                logo.style.backgroundImage = '';
+                logo.style.backgroundSize = '';
+                logo.style.backgroundPosition = '';
+                logo.style.webkitBackgroundClip = '';
+                logo.style.backgroundClip = '';
+                log('5 секунд прошло! Возвращаем как было', 'info');
+            }
+        }, 5000);
+    });
 }
