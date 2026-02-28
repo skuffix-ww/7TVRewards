@@ -17,7 +17,8 @@ const state = {
     userId: null,
     broadcasterId: null,
     emoteSetId: null,
-    activeEmote: null,
+    activeEmotes: [],       // очередь добавленных эмоутов [{id, name}, ...]
+    maxEmoteSlots: 1,       // сколько эмоутов можно добавить до удаления старых
     rewardId: null,
     seventvToken: null,
     sendChatMessages: true,
@@ -51,6 +52,14 @@ function loadState() {
         if (state.sendChatMessages !== undefined) {
             document.getElementById('send-chat-messages').checked = state.sendChatMessages;
         }
+        // Миграция: activeEmote → activeEmotes
+        if (state.activeEmote && !state.activeEmotes?.length) {
+            state.activeEmotes = [state.activeEmote];
+            delete state.activeEmote;
+        }
+        if (!Array.isArray(state.activeEmotes)) state.activeEmotes = [];
+        if (!state.maxEmoteSlots) state.maxEmoteSlots = 1;
+        document.getElementById('max-emote-slots').value = state.maxEmoteSlots;
     }
 }
 
@@ -60,7 +69,8 @@ function saveState() {
         userId: state.userId,
         broadcasterId: state.broadcasterId,
         emoteSetId: state.emoteSetId,
-        activeEmote: state.activeEmote,
+        activeEmotes: state.activeEmotes,
+        maxEmoteSlots: state.maxEmoteSlots,
         rewardId: state.rewardId,
         seventvToken: state.seventvToken,
         sendChatMessages: state.sendChatMessages
@@ -90,6 +100,15 @@ function initListeners() {
     document.getElementById('send-chat-messages').addEventListener('change', (e) => {
         state.sendChatMessages = e.target.checked;
         saveState();
+    });
+    document.getElementById('max-emote-slots').addEventListener('change', (e) => {
+        const val = parseInt(e.target.value);
+        if (val >= 1) {
+            state.maxEmoteSlots = val;
+            saveState();
+            log(`Слотов эмоутов: ${val}`, 'info');
+            updateActiveEmotesDisplay();
+        }
     });
 
     // Search
@@ -555,22 +574,32 @@ async function addEmoteToSet(emote) {
     }
 
     try {
-        // Удаляем предыдущий активный эмоут
-        if (state.activeEmote && state.activeEmote.id !== emote.id) {
-            log(`Удаление: ${state.activeEmote.name}...`, 'info');
-            await removeEmoteFromSet(state.activeEmote.id);
+        // Удаляем самые старые эмоуты если очередь заполнена
+        while (state.activeEmotes.length >= state.maxEmoteSlots) {
+            const oldest = state.activeEmotes.shift();
+            if (oldest && oldest.id !== emote.id) {
+                log(`Удаление: ${oldest.name}...`, 'info');
+                try {
+                    await removeEmoteFromSet(oldest.id);
+                } catch (e) {
+                    log(`Не удалось удалить ${oldest.name}: ${e.message}`, 'warning');
+                }
+            }
         }
+
+        // Убираем дубликат из очереди если уже есть
+        state.activeEmotes = state.activeEmotes.filter(e => e.id !== emote.id);
 
         // Добавляем новый
         log(`Добавление: ${emote.name}...`, 'info');
         await addEmoteToSetAPI(emote.id, emote.name);
 
-        state.activeEmote = { id: emote.id, name: emote.name };
+        state.activeEmotes.push({ id: emote.id, name: emote.name });
         saveState();
 
-        log(`Эмоут "${emote.name}" добавлен!`, 'success');
+        log(`Эмоут "${emote.name}" добавлен! (${state.activeEmotes.length}/${state.maxEmoteSlots})`, 'success');
         await loadEmoteSet();
-        updateActiveEmoteDisplay(emote);
+        updateActiveEmotesDisplay();
 
         return true;
     } catch (err) {
@@ -579,18 +608,25 @@ async function addEmoteToSet(emote) {
     }
 }
 
-function updateActiveEmoteDisplay(emote) {
+function updateActiveEmotesDisplay() {
     const section = document.getElementById('active-emote');
-    section.style.display = 'block';
     const container = document.getElementById('active-emote-container');
-    container.innerHTML = `
-        <img src="https://cdn.7tv.app/emote/${emote.id}/3x.webp" alt="${emote.name}">
-        <div class="emote-info">
-            <h4>${emote.name}</h4>
-            <p>ID: ${emote.id}</p>
-            <p style="color:var(--green);margin-top:4px;">Активный эмоут</p>
+
+    if (state.activeEmotes.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+    container.innerHTML = state.activeEmotes.map((emote, i) => `
+        <div class="active-emote-item">
+            <img src="https://cdn.7tv.app/emote/${emote.id}/2x.webp" alt="${emote.name}">
+            <div class="emote-info">
+                <h4>${emote.name}</h4>
+                <p>${i === 0 && state.activeEmotes.length >= state.maxEmoteSlots ? 'Следующий на удаление' : `Слот ${i + 1}/${state.maxEmoteSlots}`}</p>
+            </div>
         </div>
-    `;
+    `).join('');
 }
 
 // ==================== 7TV GQL API ====================

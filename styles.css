@@ -487,24 +487,40 @@ header {
 
 #active-emote-container {
     display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.active-emote-item {
+    display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 10px;
+    padding: 8px 12px;
+    background: rgba(0, 173, 132, 0.08);
+    border: 1px solid rgba(0, 173, 132, 0.2);
+    border-radius: var(--radius-sm);
+    flex: 1 1 200px;
+    min-width: 0;
 }
 
-#active-emote-container img {
-    width: 64px;
-    height: 64px;
+.active-emote-item img {
+    width: 40px;
+    height: 40px;
     object-fit: contain;
+    flex-shrink: 0;
 }
 
-#active-emote-container .emote-info h4 {
-    font-size: 1rem;
+.active-emote-item .emote-info h4 {
+    font-size: 0.85rem;
     color: var(--text-primary);
-    margin-bottom: 2px;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-#active-emote-container .emote-info p {
-    font-size: 0.8rem;
+.active-emote-item .emote-info p {
+    font-size: 0.75rem;
     color: var(--text-muted);
 }
 

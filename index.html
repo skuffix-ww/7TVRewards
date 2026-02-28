@@ -148,11 +148,18 @@
                 <textarea id="reward-prompt" rows="2" placeholder="Текст, который увидят зрители при активации награды">Введите ссылку на 7TV эмоут (например: https://7tv.app/emotes/...)</textarea>
             </div>
 
-            <div class="form-group">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="send-chat-messages" checked>
-                    <span>Отправлять сообщение в чат о результате</span>
-                </label>
+            <div class="form-row">
+                <div class="form-group flex-2">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="send-chat-messages" checked>
+                        <span>Отправлять сообщение в чат о результате</span>
+                    </label>
+                </div>
+                <div class="form-group flex-1">
+                    <label for="max-emote-slots">Слотов эмоутов</label>
+                    <input type="number" id="max-emote-slots" value="1" min="1" max="50">
+                    <p class="form-hint">Сколько эмоутов хранить до удаления старых</p>
+                </div>
             </div>
 
             <button id="btn-create-reward" class="btn btn-primary">Создать награду</button>
@@ -190,7 +197,7 @@
             </button>
 
             <div id="active-emote" class="active-emote-card" style="display:none;">
-                <h3>Активный эмоут</h3>
+                <h3>Активные эмоуты</h3>
                 <div id="active-emote-container"></div>
             </div>
         </section>
