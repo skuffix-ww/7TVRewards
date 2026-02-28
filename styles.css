@@ -572,6 +572,44 @@ header {
 
 /* ===== EVENT LOG ===== */
 
+.card-header-toggle {
+    cursor: pointer;
+    user-select: none;
+}
+
+.card-header-toggle:hover h2 {
+    color: var(--purple-hover);
+}
+
+.card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    color: var(--text-muted);
+}
+
+.log-collapse.collapsed .toggle-icon,
+.log-section-collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.log-collapse {
+    max-height: 300px;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    opacity: 1;
+}
+
+.log-collapse.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
 .event-log {
     background: var(--bg-input);
     border-radius: var(--radius-sm);
@@ -782,6 +820,71 @@ header {
 .credit-name-purple:hover {
     color: var(--purple);
     text-decoration: underline;
+}
+
+.modal-wide {
+    max-width: 520px;
+}
+
+/* ===== CHANGELOG ===== */
+
+.changelog-body {
+    text-align: left;
+}
+
+.changelog-entry {
+    margin-bottom: 20px;
+}
+
+.changelog-entry:last-child {
+    margin-bottom: 0;
+}
+
+.changelog-version {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.changelog-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.changelog-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.changelog-list li {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    padding: 3px 0 3px 20px;
+    position: relative;
+    line-height: 1.4;
+}
+
+.changelog-list li::before {
+    position: absolute;
+    left: 0;
+    font-size: 0.75rem;
+}
+
+.changelog-list li.cl-new::before {
+    content: '✦';
+    color: var(--green);
+}
+
+.changelog-list li.cl-fix::before {
+    content: '✧';
+    color: var(--yellow);
+}
+
+.changelog-list li.cl-change::before {
+    content: '↻';
+    color: var(--purple-hover);
 }
 
 .modal-footer-text {

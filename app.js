@@ -119,8 +119,14 @@ function initListeners() {
     document.getElementById('btn-load-more-search').addEventListener('click', () => handleSearchEmote(false));
 
     // Log
-    document.getElementById('btn-clear-log').addEventListener('click', () => {
+    document.getElementById('btn-clear-log').addEventListener('click', (e) => {
+        e.stopPropagation();
         document.getElementById('event-log').innerHTML = '';
+        document.getElementById('log-count').textContent = '0';
+    });
+    document.getElementById('log-toggle').addEventListener('click', () => {
+        const collapse = document.getElementById('log-collapse');
+        collapse.classList.toggle('collapsed');
     });
 
     // Info modal
@@ -133,6 +139,18 @@ function initListeners() {
     });
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.style.display = 'none';
+    });
+
+    // Changelog modal
+    const changelog = document.getElementById('changelog-modal');
+    document.getElementById('btn-changelog').addEventListener('click', () => {
+        changelog.style.display = 'flex';
+    });
+    document.getElementById('btn-close-changelog').addEventListener('click', () => {
+        changelog.style.display = 'none';
+    });
+    changelog.addEventListener('click', (e) => {
+        if (e.target === changelog) changelog.style.display = 'none';
     });
 
     handleAuthCallback();
@@ -148,6 +166,7 @@ function log(message, type = 'info') {
     entry.innerHTML = `<span class="log-time">[${time}]</span>${message}`;
     el.insertBefore(entry, el.firstChild);
     while (el.children.length > 200) el.removeChild(el.lastChild);
+    document.getElementById('log-count').textContent = el.children.length;
 }
 
 // ==================== АВТОРИЗАЦИЯ ====================
@@ -571,6 +590,18 @@ async function addEmoteToSet(emote) {
     if (!state.seventvToken) {
         log('Введите токен 7TV для добавления эмоутов', 'warning');
         return;
+    }
+
+    // Проверка дубликатов в наборе
+    const duplicateById = state.allSetEmotes.find(e => e.id === emote.id);
+    const duplicateByName = state.allSetEmotes.find(e => e.name === emote.name && e.id !== emote.id);
+    if (duplicateById) {
+        log(`Эмоут "${emote.name}" уже есть в наборе!`, 'warning');
+        return false;
+    }
+    if (duplicateByName) {
+        log(`Эмоут с именем "${emote.name}" уже есть в наборе (${duplicateByName.id})!`, 'warning');
+        return false;
     }
 
     try {
