@@ -764,16 +764,22 @@ async function handleCreateReward() {
 // ==================== СЛУШАТЕЛЬ НАГРАД ====================
 
 let pollingInterval = null;
+let isPolling = false;
+const processedRedemptions = new Set();
 
 function startRewardListener() {
     if (pollingInterval) clearInterval(pollingInterval);
+    isPolling = false;
+    processedRedemptions.clear();
     log('Слушатель наград запущен', 'info');
     pollingInterval = setInterval(checkNewRedemptions, 5000);
 }
 
 async function checkNewRedemptions() {
     if (!state.rewardId || !state.twitchToken) return;
+    if (isPolling) return;
 
+    isPolling = true;
     try {
         const res = await fetch(
             `${CONFIG.SERVER_URL}/api/twitch/rewards/redemptions?token=${state.twitchToken}&broadcasterId=${state.broadcasterId}&rewardId=${state.rewardId}`
@@ -784,10 +790,14 @@ async function checkNewRedemptions() {
         const redemptions = data.data || [];
 
         for (const r of redemptions) {
+            if (processedRedemptions.has(r.id)) continue;
+            processedRedemptions.add(r.id);
             await processRedemption(r);
         }
     } catch (_) {
         // тихий polling
+    } finally {
+        isPolling = false;
     }
 }
 
