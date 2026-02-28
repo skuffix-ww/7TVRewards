@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
     startCountdown();
     startFloatingEmotes();
-    initLogoEasterEgg();
 });
 
 function loadState() {
@@ -1611,77 +1610,4 @@ function toggleTroubleshooting() {
             card.classList.add('open');
         }
     }
-}
-
-// ==================== LOGO EASTER EGG ====================
-
-let logoAnimationInterval = null;
-let logoAnimationTimeout = null;
-
-function initLogoEasterEgg() {
-    const logo = document.getElementById('main-logo');
-    if (!logo) return;
-
-    logo.addEventListener('click', () => {
-        if (!state.allSetEmotes || state.allSetEmotes.length === 0) {
-            log('Сначала выберите набор эмоутов!', 'warn');
-            return;
-        }
-
-        if (logoAnimationInterval) {
-            clearInterval(logoAnimationInterval);
-            clearTimeout(logoAnimationTimeout);
-            logoAnimationInterval = null;
-            logoAnimationTimeout = null;
-            logo.classList.remove('logo-animating');
-            logo.style.backgroundImage = '';
-            log('Анимация логотипа остановлена', 'info');
-            return;
-        }
-
-        log('Погнали! Кликни ещё раз чтобы остановить', 'success');
-
-        const emotes = state.allSetEmotes;
-        let emoteIndex = 0;
-        let opacity = 0;
-        let fadingIn = true;
-
-        logo.classList.add('logo-animating');
-
-        // Плавное появление первого эмоута
-        const firstEmote = emotes[0];
-        logo.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://cdn.7tv.app/emote/${firstEmote.id}/2x.webp)`;
-        
-        // Быстрая смена фона (переливание)
-        logoAnimationInterval = setInterval(() => {
-            const emote = emotes[emoteIndex % emotes.length];
-            emoteIndex++;
-
-            // Плавное затухание
-            logo.style.transition = 'opacity 0.08s ease';
-            logo.style.opacity = '0.3';
-
-            setTimeout(() => {
-                // Смена фона
-                logo.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://cdn.7tv.app/emote/${emote.id}/2x.webp)`;
-                // Плавное появление
-                logo.style.opacity = '1';
-            }, 80);
-        }, 120);
-
-        // Авто-остановка через 5 секунд
-        logoAnimationTimeout = setTimeout(() => {
-            if (logoAnimationInterval) {
-                clearInterval(logoAnimationInterval);
-                clearTimeout(logoAnimationTimeout);
-                logoAnimationInterval = null;
-                logoAnimationTimeout = null;
-                logo.classList.remove('logo-animating');
-                logo.style.backgroundImage = '';
-                logo.style.opacity = '';
-                logo.style.transition = '';
-                log('5 секунд прошло! Возвращаем как было', 'info');
-            }
-        }, 5000);
-    });
 }
