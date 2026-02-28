@@ -11,9 +11,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
+function decodeEnv(val) {
+    if (!val) return val;
+    try { return Buffer.from(val, 'base64').toString('utf-8'); } catch { return val; }
+}
+
 const CONFIG = {
-    TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID,
-    TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,
+    TWITCH_CLIENT_ID: decodeEnv(process.env.TWITCH_CLIENT_ID),
+    TWITCH_CLIENT_SECRET: decodeEnv(process.env.TWITCH_CLIENT_SECRET),
     TWITCH_REDIRECT_URI: process.env.TWITCH_REDIRECT_URI,
     SEVENTV_API_BASE: 'https://7tv.io/v3',
     TWITCH_API_BASE: 'https://api.twitch.tv/helix',
