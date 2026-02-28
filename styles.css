@@ -156,6 +156,14 @@ header {
     margin-bottom: 8px;
 }
 
+.donate-links-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
 /* ===== CARDS ===== */
 
 .card {
@@ -982,6 +990,57 @@ header {
 
 .modal-footer-text a:hover {
     text-decoration: underline;
+}
+
+/* ===== FOOTER ===== */
+
+.site-footer {
+    padding: 8px 0 16px;
+    text-align: center;
+}
+
+.footer-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 16px;
+}
+
+.footer-brand {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--purple);
+    margin-bottom: 12px;
+}
+
+.footer-brand span {
+    color: var(--teal);
+}
+
+.footer-legal {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 8px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.footer-legal a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}
+
+.footer-legal a:hover {
+    color: var(--text-primary);
+}
+
+.footer-copy {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 12px;
+    opacity: 0.6;
 }
 
 /* ===== RESPONSIVE ===== */

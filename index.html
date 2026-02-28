@@ -27,13 +27,17 @@
         <div class="countdown-banner">
             <div class="countdown-text">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span>Сайту осталось: <strong id="countdown-timer"></strong></span>
+                <span>Сайту осталось примерно: <strong id="countdown-timer"></strong></span>
             </div>
             <div class="countdown-donate">
                 <span>Хотите продлить?</span>
                 <a href="https://donatex.gg/donate/skuffix" target="_blank" class="donate-link">
                     <img src="https://donatex.gg/logo.svg" alt="Donatex" class="donate-icon">
                     Donatex
+                </a>
+                <a href="https://www.donationalerts.com/r/skuffix508" target="_blank" class="donate-link">
+                    <img src="https://www.donationalerts.com/favicon.ico" alt="DonationAlerts" class="donate-icon">
+                    DonationAlerts
                 </a>
             </div>
         </div>
@@ -49,7 +53,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="modal-logo">7TV<span>Rewards</span></div>
-                    <p class="modal-version">v1.2.0</p>
+                    <p class="modal-version">v1.2.1</p>
                     <p class="modal-desc">Автоматическая замена 7TV эмоутов через награды канала Twitch. Зрители покупают эмоуты за баллы канала — система добавляет их в набор.</p>
                     <div class="modal-divider"></div>
                     <div class="modal-credits">
@@ -70,10 +74,16 @@
                     <div class="modal-divider"></div>
                     <div class="modal-donate">
                         <p>Поддержать проект:</p>
-                        <a href="https://donatex.gg/donate/skuffix" target="_blank" class="donate-link donate-link-lg">
-                            <img src="https://donatex.gg/logo.svg" alt="Donatex" class="donate-icon">
-                            Donatex
-                        </a>
+                        <div class="donate-links-row">
+                            <a href="https://donatex.gg/donate/skuffix" target="_blank" class="donate-link donate-link-lg">
+                                <img src="https://donatex.gg/logo.svg" alt="Donatex" class="donate-icon">
+                                Donatex
+                            </a>
+                            <a href="https://www.donationalerts.com/r/skuffix508" target="_blank" class="donate-link donate-link-lg">
+                                <img src="https://www.donationalerts.com/favicon.ico" alt="DonationAlerts" class="donate-icon">
+                                DonationAlerts
+                            </a>
+                        </div>
                     </div>
                     <div class="modal-divider"></div>
                     <p class="modal-footer-text">
@@ -93,6 +103,17 @@
                     </button>
                 </div>
                 <div class="modal-body changelog-body">
+                    <div class="changelog-entry">
+                        <div class="changelog-version">
+                            <span class="badge badge-info">v1.2.1</span>
+                            <span class="changelog-date">28.02.2026</span>
+                        </div>
+                        <ul class="changelog-list">
+                            <li class="cl-new">Ссылка на DonationAlerts в баннере и модалке</li>
+                            <li class="cl-new">Юридический футер (дисклеймеры, ToS, копирайт)</li>
+                            <li class="cl-change">Таймер теперь показывает «примерно»</li>
+                        </ul>
+                    </div>
                     <div class="changelog-entry">
                         <div class="changelog-version">
                             <span class="badge badge-info">v1.2.0</span>
@@ -311,6 +332,17 @@
                 </div>
             </div>
         </section>
+    </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-divider"></div>
+            <p class="footer-brand">7TV<span>Rewards</span> &middot; v1.2.1</p>
+            <p class="footer-legal">Данный сервис не является официальным продуктом Twitch Interactive, Inc. или 7TV. Все торговые марки принадлежат их владельцам. Twitch, логотип Twitch и Channel Points являются товарными знаками Twitch Interactive, Inc. 7TV является независимым сервисом эмоутов.</p>
+            <p class="footer-legal">Сервис предоставляется «как есть» (as is) без каких-либо гарантий. Разработчик не несёт ответственности за возможные сбои, потерю данных или нарушение условий использования сторонних платформ.</p>
+            <p class="footer-legal">Используя данный сервис, вы соглашаетесь с <a href="https://www.twitch.tv/p/legal/terms-of-service/" target="_blank">Условиями использования Twitch</a> и <a href="https://7tv.app/tos" target="_blank">Условиями использования 7TV</a>.</p>
+            <p class="footer-copy">&copy; 2026 skuffix-ww &middot; MIT License</p>
+        </footer>
     </div>
 
     <script src="app.js"></script>
