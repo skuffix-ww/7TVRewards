@@ -19,6 +19,7 @@ const state = {
     emoteSetId: null,
     activeEmotes: [],       // очередь добавленных эмоутов [{id, name}, ...]
     maxEmoteSlots: 1,       // сколько эмоутов можно добавить до удаления старых
+    slotsDisabled: false,   // если true — удалять старые эмоуты не надо
     rewardId: null,
     seventvToken: null,
     sendChatMessages: true,
@@ -27,7 +28,12 @@ const state = {
     displayedSetEmotes: 0,
     searchQuery: '',
     searchPage: 1,
-    searchHasMore: false
+    searchHasMore: false,
+    // beta v1.4.0β
+    betaEnabled: false,
+    rewardCost: 0,
+    emoteHistory: [],        // [{id, userId, userName, emoteId, emoteName, timestamp, cost}] — cap 500
+    userModeration: {}       // {userId: {type:'ban'|'mute'|'block', until:timestamp|null, name:string}}
 };
 
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
@@ -61,6 +67,20 @@ function loadState() {
         if (!Array.isArray(state.activeEmotes)) state.activeEmotes = [];
         if (!state.maxEmoteSlots) state.maxEmoteSlots = 1;
         document.getElementById('max-emote-slots').value = state.maxEmoteSlots;
+        if (state.slotsDisabled) {
+            document.getElementById('slots-unlimited').checked = true;
+            document.getElementById('max-emote-slots').disabled = true;
+            document.getElementById('slots-hint').textContent = 'Эмоуты накапливаются без удаления';
+        }
+        // Beta state
+        if (!Array.isArray(state.emoteHistory)) state.emoteHistory = [];
+        if (!state.userModeration || typeof state.userModeration !== 'object') state.userModeration = {};
+        if (state.betaEnabled) {
+            applyVersionDisplay('v1.4.0β');
+            document.getElementById('dashboard-section').style.display = 'block';
+            updateBetaButton(true);
+            renderDashboard();
+        }
     }
 }
 
@@ -72,9 +92,15 @@ function saveState() {
         emoteSetId: state.emoteSetId,
         activeEmotes: state.activeEmotes,
         maxEmoteSlots: state.maxEmoteSlots,
+        slotsDisabled: state.slotsDisabled,
         rewardId: state.rewardId,
         seventvToken: state.seventvToken,
-        sendChatMessages: state.sendChatMessages
+        sendChatMessages: state.sendChatMessages,
+        // beta
+        betaEnabled: state.betaEnabled,
+        rewardCost: state.rewardCost,
+        emoteHistory: state.emoteHistory,
+        userModeration: state.userModeration
     }));
 }
 
@@ -110,6 +136,16 @@ function initListeners() {
             log(`Слотов эмоутов: ${val}`, 'info');
             updateActiveEmotesDisplay();
         }
+    });
+    document.getElementById('slots-unlimited').addEventListener('change', (e) => {
+        state.slotsDisabled = e.target.checked;
+        document.getElementById('max-emote-slots').disabled = e.target.checked;
+        document.getElementById('slots-hint').textContent = e.target.checked
+            ? 'Эмоуты накапливаются без удаления'
+            : 'Сколько эмоутов хранить до удаления старых';
+        saveState();
+        log(e.target.checked ? 'Слоты отключены — эмоуты без ограничений' : `Слоты включены: ${state.maxEmoteSlots}`, 'info');
+        updateActiveEmotesDisplay();
     });
 
     // Search
@@ -153,6 +189,63 @@ function initListeners() {
     changelog.addEventListener('click', (e) => {
         if (e.target === changelog) changelog.style.display = 'none';
     });
+
+    // Beta modal
+    const betaModal = document.getElementById('beta-modal');
+    document.getElementById('btn-beta-activate-cl').addEventListener('click', () => {
+        if (state.betaEnabled) {
+            deactivateBeta();
+        } else {
+            betaModal.style.display = 'flex';
+        }
+    });
+    document.getElementById('btn-close-beta-modal').addEventListener('click', () => {
+        betaModal.style.display = 'none';
+    });
+    betaModal.addEventListener('click', (e) => {
+        if (e.target === betaModal) betaModal.style.display = 'none';
+    });
+    document.getElementById('btn-beta-activate').addEventListener('click', () => {
+        activateBeta(false);
+    });
+    document.getElementById('btn-beta-reauth').addEventListener('click', () => {
+        activateBeta(true);
+    });
+
+    // Dashboard tabs
+    document.querySelectorAll('.dash-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById('dash-' + tab.dataset.tab).classList.add('active');
+        });
+    });
+
+    // History filter
+    document.getElementById('history-filter').addEventListener('input', () => {
+        if (state.betaEnabled) renderHistoryTab();
+    });
+
+    // Clear history
+    document.getElementById('btn-clear-history').addEventListener('click', () => {
+        state.emoteHistory = [];
+        saveState();
+        renderDashboard();
+        log('История очищена', 'info');
+    });
+
+    // Mod modal
+    const modModal = document.getElementById('mod-modal');
+    document.getElementById('btn-close-mod-modal').addEventListener('click', () => {
+        modModal.style.display = 'none';
+    });
+    modModal.addEventListener('click', (e) => {
+        if (e.target === modModal) modModal.style.display = 'none';
+    });
+
+    // History list event delegation for mod buttons
+    document.getElementById('history-list').addEventListener('click', handleHistoryClick);
 
     handleAuthCallback();
 }
@@ -606,15 +699,17 @@ async function addEmoteToSet(emote) {
     }
 
     try {
-        // Удаляем самые старые эмоуты если очередь заполнена
-        while (state.activeEmotes.length >= state.maxEmoteSlots) {
-            const oldest = state.activeEmotes.shift();
-            if (oldest && oldest.id !== emote.id) {
-                log(`Удаление: ${oldest.name}...`, 'info');
-                try {
-                    await removeEmoteFromSet(oldest.id);
-                } catch (e) {
-                    log(`Не удалось удалить ${oldest.name}: ${e.message}`, 'warning');
+        // Удаляем самые старые эмоуты если очередь заполнена (и слоты включены)
+        if (!state.slotsDisabled) {
+            while (state.activeEmotes.length >= state.maxEmoteSlots) {
+                const oldest = state.activeEmotes.shift();
+                if (oldest && oldest.id !== emote.id) {
+                    log(`Удаление: ${oldest.name}...`, 'info');
+                    try {
+                        await removeEmoteFromSet(oldest.id);
+                    } catch (e) {
+                        log(`Не удалось удалить ${oldest.name}: ${e.message}`, 'warning');
+                    }
                 }
             }
         }
@@ -629,7 +724,7 @@ async function addEmoteToSet(emote) {
         state.activeEmotes.push({ id: emote.id, name: emote.name });
         saveState();
 
-        log(`Эмоут "${emote.name}" добавлен! (${state.activeEmotes.length}/${state.maxEmoteSlots})`, 'success');
+        log(`Эмоут "${emote.name}" добавлен!${state.slotsDisabled ? '' : ` (${state.activeEmotes.length}/${state.maxEmoteSlots})`}`, 'success');
         await loadEmoteSet();
         updateActiveEmotesDisplay();
 
@@ -655,7 +750,7 @@ function updateActiveEmotesDisplay() {
             <img src="https://cdn.7tv.app/emote/${emote.id}/2x.webp" alt="${emote.name}">
             <div class="emote-info">
                 <h4>${emote.name}</h4>
-                <p>${i === 0 && state.activeEmotes.length >= state.maxEmoteSlots ? 'Следующий на удаление' : `Слот ${i + 1}/${state.maxEmoteSlots}`}</p>
+                <p>${state.slotsDisabled ? `Эмоут ${i + 1}` : (i === 0 && state.activeEmotes.length >= state.maxEmoteSlots ? 'Следующий на удаление' : `Слот ${i + 1}/${state.maxEmoteSlots}`)}</p>
             </div>
         </div>
     `).join('');
@@ -770,6 +865,7 @@ async function loadChannelRewards() {
 
 function selectReward(reward) {
     state.rewardId = reward.id;
+    state.rewardCost = reward.cost;
     saveState();
 
     // Обновляем выделение
@@ -831,6 +927,7 @@ async function handleCreateReward() {
 
         const data = await res.json();
         state.rewardId = data.data[0].id;
+        state.rewardCost = cost;
         saveState();
 
         log(`Награда "${title}" создана (${cost} pts)`, 'success');
@@ -885,6 +982,21 @@ async function processRedemption(redemption) {
     const userName = redemption.user_name || redemption.user?.display_name || 'Unknown';
     const userInput = (redemption.user_input || '').trim();
 
+    // Проверка модерации
+    const mod = state.userModeration[redemption.user_id];
+    if (mod) {
+        if (mod.type === 'block' || (mod.type === 'ban' && mod.until && Date.now() < mod.until)) {
+            log(`${userName} заблокирован — награда отменена`, 'warning');
+            await markRedemptionStatus(redemption.id, 'CANCELED');
+            return;
+        }
+        // Убираем истекшие баны
+        if (mod.type === 'ban' && mod.until && Date.now() >= mod.until) {
+            delete state.userModeration[redemption.user_id];
+            saveState();
+        }
+    }
+
     log(`${userName} активировал награду!`, 'success');
 
     if (!userInput) {
@@ -916,6 +1028,20 @@ async function processRedemption(redemption) {
         const success = await addEmoteToSet(emote);
 
         if (success) {
+            // Запись в историю
+            state.emoteHistory.unshift({
+                id: crypto.randomUUID(),
+                userId: redemption.user_id,
+                userName,
+                emoteId: emote.id,
+                emoteName: emote.name,
+                timestamp: Date.now(),
+                cost: state.rewardCost
+            });
+            if (state.emoteHistory.length > 500) state.emoteHistory.pop();
+            saveState();
+            if (state.betaEnabled) renderDashboard();
+
             await sendChatNotification(userName, emote.name, true);
             await markRedemptionStatus(redemption.id, 'FULFILLED');
         } else {
@@ -1034,4 +1160,298 @@ function startCountdown() {
 
     update();
     setInterval(update, 1000);
+}
+
+// ==================== БЕТА v1.4.0β ====================
+
+function applyVersionDisplay(version) {
+    const modalVer = document.getElementById('modal-version');
+    const footerVer = document.getElementById('footer-version');
+    if (modalVer) modalVer.textContent = version;
+    if (footerVer) footerVer.textContent = version;
+    document.title = `7TV Emote Rewards — ${version}`;
+}
+
+function updateBetaButton(active) {
+    const btn = document.getElementById('btn-beta-activate-cl');
+    if (!btn) return;
+    if (active) {
+        btn.innerHTML = '<span class="beta-symbol">β</span> Деактивировать бету';
+        btn.classList.add('deactivate');
+    } else {
+        btn.innerHTML = '<span class="beta-symbol">β</span> Активировать v1.4.0β';
+        btn.classList.remove('deactivate');
+    }
+}
+
+function activateBeta(reauth = false) {
+    state.betaEnabled = true;
+    saveState();
+    applyVersionDisplay('v1.4.0β');
+    updateBetaButton(true);
+    document.getElementById('dashboard-section').style.display = 'block';
+    renderDashboard();
+    document.getElementById('beta-modal').style.display = 'none';
+    log('Бета v1.4.0β активирована!', 'success');
+
+    if (reauth) {
+        // Добавляем channel:moderate и перерегистрируемся
+        const scopesWithMod = CONFIG.SCOPES + ' channel:moderate';
+        const url = `https://id.twitch.tv/oauth2/authorize` +
+            `?client_id=${CONFIG.TWITCH_CLIENT_ID}` +
+            `&redirect_uri=${encodeURIComponent(CONFIG.TWITCH_REDIRECT_URI)}` +
+            `&response_type=token` +
+            `&scope=${encodeURIComponent(scopesWithMod)}`;
+        window.location.href = url;
+    }
+}
+
+function deactivateBeta() {
+    state.betaEnabled = false;
+    saveState();
+    applyVersionDisplay('v1.3.0');
+    updateBetaButton(false);
+    document.getElementById('dashboard-section').style.display = 'none';
+    log('Бета деактивирована', 'info');
+}
+
+// ==================== ДАШБОРД ====================
+
+function renderDashboard() {
+    renderHistoryTab();
+    renderStatsTab();
+}
+
+function renderHistoryTab() {
+    const container = document.getElementById('history-list');
+    const filterVal = (document.getElementById('history-filter')?.value || '').toLowerCase().trim();
+
+    let items = state.emoteHistory;
+    if (filterVal) {
+        items = items.filter(h =>
+            h.userName.toLowerCase().includes(filterVal) ||
+            h.emoteName.toLowerCase().includes(filterVal)
+        );
+    }
+
+    if (items.length === 0) {
+        container.innerHTML = '<div class="no-data">' + (filterVal ? 'Ничего не найдено' : 'История пуста') + '</div>';
+        return;
+    }
+
+    container.innerHTML = items.map(entry => {
+        const mod = state.userModeration[entry.userId];
+        let modBadge = '';
+        if (mod) {
+            const labels = { ban: 'БАН', mute: 'МУТ', block: 'БЛОК' };
+            const classes = { ban: 'mod-badge-ban', mute: 'mod-badge-mute', block: 'mod-badge-block' };
+            modBadge = `<span class="mod-badge ${classes[mod.type]}">${labels[mod.type]}</span>`;
+        }
+
+        const modButtons = mod
+            ? `<div class="mod-actions">
+                <button class="btn-mod btn-mod-unmod" data-action="unmod" data-uid="${entry.userId}">Снять</button>
+              </div>`
+            : `<div class="mod-actions">
+                <button class="btn-mod btn-mod-ban" data-action="ban" data-uid="${entry.userId}" data-uname="${entry.userName}">Бан</button>
+                <button class="btn-mod btn-mod-mute" data-action="mute" data-uid="${entry.userId}" data-uname="${entry.userName}">Мут</button>
+                <button class="btn-mod btn-mod-block" data-action="block" data-uid="${entry.userId}" data-uname="${entry.userName}">Блок</button>
+              </div>`;
+
+        return `<div class="history-entry">
+            <img src="https://cdn.7tv.app/emote/${entry.emoteId}/2x.webp" alt="${entry.emoteName}" loading="lazy">
+            <div class="history-entry-info">
+                <span class="emote-name-hist">${entry.emoteName}</span>
+                <span class="user-name-hist">${entry.userName}${modBadge}</span>
+                <span class="time-hist">${formatRelativeTime(entry.timestamp)}</span>
+            </div>
+            ${entry.cost ? `<span class="history-cost">${entry.cost} pts</span>` : ''}
+            ${modButtons}
+        </div>`;
+    }).join('');
+}
+
+function renderStatsTab() {
+    const history = state.emoteHistory;
+    const totalPts = history.reduce((sum, h) => sum + (h.cost || 0), 0);
+    const totalEmotes = history.length;
+    const uniqueUsers = new Set(history.map(h => h.userId)).size;
+
+    document.getElementById('stat-total-pts').textContent = totalPts.toLocaleString();
+    document.getElementById('stat-total-emotes').textContent = totalEmotes;
+    document.getElementById('stat-unique-users').textContent = uniqueUsers;
+
+    // Лидерборд
+    const userStats = {};
+    history.forEach(h => {
+        if (!userStats[h.userId]) {
+            userStats[h.userId] = { name: h.userName, totalCost: 0, count: 0 };
+        }
+        userStats[h.userId].totalCost += (h.cost || 0);
+        userStats[h.userId].count++;
+    });
+
+    const sorted = Object.entries(userStats)
+        .sort((a, b) => b[1].totalCost - a[1].totalCost)
+        .slice(0, 10);
+
+    const lbContainer = document.getElementById('leaderboard');
+    if (sorted.length === 0) {
+        lbContainer.innerHTML = '<div class="no-data">Нет данных</div>';
+        return;
+    }
+
+    lbContainer.innerHTML = sorted.map(([, data], i) => {
+        const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+        return `<div class="leaderboard-item">
+            <span class="lb-rank ${rankClass}">#${i + 1}</span>
+            <span class="lb-name">${data.name}</span>
+            <span class="lb-stats">${data.totalCost.toLocaleString()} pts · ${data.count} эмоутов</span>
+        </div>`;
+    }).join('');
+}
+
+// ==================== МОДЕРАЦИЯ ====================
+
+let pendingModAction = null; // {action, userId, userName}
+
+function handleHistoryClick(e) {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+
+    const action = btn.dataset.action;
+    const userId = btn.dataset.uid;
+    const userName = btn.dataset.uname;
+
+    if (action === 'unmod') {
+        removeMod(userId);
+        return;
+    }
+
+    if (action === 'block') {
+        applyBlock(userId, userName);
+        return;
+    }
+
+    // ban / mute — показываем выбор длительности
+    pendingModAction = { action, userId, userName };
+    openModModal(action, userName);
+}
+
+function openModModal(action, userName) {
+    const modal = document.getElementById('mod-modal');
+    const title = document.getElementById('mod-modal-title');
+    const user = document.getElementById('mod-modal-user');
+    const desc = document.getElementById('mod-modal-desc');
+    const content = document.getElementById('mod-modal-content');
+
+    title.textContent = action === 'ban' ? 'Бан пользователя' : 'Мут пользователя';
+    user.textContent = userName;
+    desc.textContent = action === 'ban'
+        ? 'Заблокировать добавление эмоутов на выбранный период'
+        : 'Замутить в чате Twitch на выбранный период';
+
+    const durations = [
+        { label: '1 мин', seconds: 60 },
+        { label: '10 мин', seconds: 600 },
+        { label: '1 час', seconds: 3600 },
+        { label: '6 часов', seconds: 21600 },
+        { label: '24 часа', seconds: 86400 },
+        { label: '7 дней', seconds: 604800 }
+    ];
+
+    content.innerHTML = `<div class="duration-grid">
+        ${durations.map(d => `<button class="duration-btn" data-seconds="${d.seconds}">${d.label}</button>`).join('')}
+    </div>`;
+
+    // Обработчики длительности
+    content.querySelectorAll('.duration-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const seconds = parseInt(btn.dataset.seconds);
+            if (pendingModAction) {
+                if (pendingModAction.action === 'ban') {
+                    applyBan(pendingModAction.userId, pendingModAction.userName, seconds);
+                } else if (pendingModAction.action === 'mute') {
+                    applyMute(pendingModAction.userId, pendingModAction.userName, seconds);
+                }
+                pendingModAction = null;
+            }
+            modal.style.display = 'none';
+        });
+    });
+
+    modal.style.display = 'flex';
+}
+
+function applyBan(userId, userName, seconds) {
+    state.userModeration[userId] = { type: 'ban', until: Date.now() + seconds * 1000, name: userName };
+    saveState();
+    renderHistoryTab();
+    log(`${userName} забанен на ${formatDuration(seconds)}`, 'warning');
+}
+
+async function applyMute(userId, userName, seconds) {
+    try {
+        const res = await fetch(`${CONFIG.SERVER_URL}/api/twitch/moderation/ban`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                token: state.twitchToken,
+                broadcasterId: state.broadcasterId,
+                moderatorId: state.userId,
+                userId,
+                duration: seconds,
+                reason: '7TV Rewards: мут'
+            })
+        });
+        if (res.ok) {
+            log(`${userName} замучен в чате на ${formatDuration(seconds)}`, 'success');
+        } else {
+            const data = await res.json().catch(() => ({}));
+            log(`Ошибка мута ${userName}: ${data.error || res.status}`, 'error');
+        }
+    } catch (err) {
+        log(`Ошибка мута: ${err.message}`, 'error');
+    }
+
+    state.userModeration[userId] = { type: 'mute', until: Date.now() + seconds * 1000, name: userName };
+    saveState();
+    renderHistoryTab();
+}
+
+function applyBlock(userId, userName) {
+    state.userModeration[userId] = { type: 'block', until: null, name: userName };
+    saveState();
+    renderHistoryTab();
+    log(`${userName} заблокирован навсегда`, 'warning');
+}
+
+function removeMod(userId) {
+    const name = state.userModeration[userId]?.name || userId;
+    delete state.userModeration[userId];
+    saveState();
+    renderHistoryTab();
+    log(`Модерация снята: ${name}`, 'info');
+}
+
+// ==================== УТИЛИТЫ ВРЕМЕНИ ====================
+
+function formatRelativeTime(timestamp) {
+    const diff = Date.now() - timestamp;
+    const seconds = Math.floor(diff / 1000);
+    if (seconds < 60) return 'только что';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} мин назад`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} ч назад`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days} д назад`;
+    return new Date(timestamp).toLocaleDateString('ru-RU');
+}
+
+function formatDuration(seconds) {
+    if (seconds < 60) return `${seconds} сек`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} мин`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} ч`;
+    return `${Math.floor(seconds / 86400)} д`;
 }

@@ -284,6 +284,45 @@ app.post('/api/twitch/chat/messages', async (req, res) => {
     }
 });
 
+// ==================== TWITCH MODERATION ====================
+
+// Мут/бан пользователя в чате
+app.post('/api/twitch/moderation/ban', async (req, res) => {
+    try {
+        const { token, broadcasterId, moderatorId, userId, duration, reason } = req.body;
+
+        log(`Moderation: user=${userId}, duration=${duration || 'permanent'}`);
+
+        const body = { data: { user_id: userId, reason: reason || '' } };
+        if (duration) body.data.duration = duration;
+
+        const response = await fetch(
+            `${CONFIG.TWITCH_API_BASE}/moderation/bans?broadcaster_id=${broadcasterId}&moderator_id=${moderatorId}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Client-Id': CONFIG.TWITCH_CLIENT_ID,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            }
+        );
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            log(`Moderation Error: ${data.message || response.status}`, 'error');
+            return res.status(response.status).json({ error: data.message || 'Ошибка модерации' });
+        }
+
+        log(`Moderation Success`);
+        res.json(data);
+    } catch (error) {
+        log(`Moderation Error: ${error.message}`, 'error');
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // ==================== ЗАПУСК ====================
 
 app.listen(PORT, () => {
