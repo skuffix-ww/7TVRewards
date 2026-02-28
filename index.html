@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7TV Emote Rewards</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">7TV<span>Rewards</span></div>
+            <p class="subtitle">Twitch Channel Points &rarr; 7TV Emotes</p>
+        </header>
+
+        <!-- Авторизация -->
+        <section id="auth-section" class="card">
+            <div class="card-header">
+                <h2>Авторизация</h2>
+                <div id="auth-status" class="badge badge-warning">Не авторизован</div>
+            </div>
+            <div id="auth-content">
+                <button id="btn-login" class="btn btn-primary btn-lg">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+                    Войти через Twitch
+                </button>
+                <button id="btn-logout" class="btn btn-outline" style="display:none;">Выйти</button>
+            </div>
+            <div id="user-info" class="user-card" style="display:none;">
+                <img id="user-avatar" src="" alt="">
+                <div>
+                    <span id="username" class="user-name"></span>
+                    <span class="user-role">Стример</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Настройки 7TV -->
+        <section id="seventv-section" class="card" style="display:none;">
+            <div class="card-header">
+                <h2>7TV Настройки</h2>
+                <div id="seventv-status" class="badge badge-warning">Не подключено</div>
+            </div>
+
+            <div class="form-group">
+                <label for="seventv-token">Токен 7TV</label>
+                <div class="input-row">
+                    <input type="password" id="seventv-token" placeholder="Вставьте ваш 7TV токен">
+                    <button id="btn-toggle-token" class="btn btn-icon" title="Показать/скрыть">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                    <button id="btn-save-token" class="btn btn-secondary">Сохранить</button>
+                </div>
+                <div id="token-status"></div>
+                <p class="form-hint">Откройте <a href="https://7tv.app" target="_blank">7tv.app</a>, залогиньтесь &rarr; F12 &rarr; Network &rarr; обновите страницу &rarr; найдите любой запрос к <code>7tv.io</code> &rarr; скопируйте значение заголовка <code>Authorization</code> (без "Bearer ")</p>
+            </div>
+
+            <div class="form-group">
+                <label for="emote-set-select">Набор эмоутов</label>
+                <select id="emote-set-select" disabled>
+                    <option value="">Сначала авторизуйтесь</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Или введите ID набора вручную</label>
+                <div class="input-row">
+                    <input type="text" id="emote-set-id" placeholder="ID набора эмоутов">
+                    <button id="btn-save-set" class="btn btn-secondary">Загрузить</button>
+                </div>
+            </div>
+
+            <div id="current-emotes" class="emotes-section" style="display:none;">
+                <div class="section-header">
+                    <h3>Эмоуты в наборе</h3>
+                    <span id="emotes-count" class="badge badge-info">0</span>
+                </div>
+                <div id="emotes-container" class="emote-grid"></div>
+                <button id="btn-load-more-emotes" class="btn btn-ghost btn-block" style="display:none;">
+                    Загрузить ещё
+                </button>
+            </div>
+        </section>
+
+        <!-- Награды -->
+        <section id="rewards-section" class="card" style="display:none;">
+            <div class="card-header">
+                <h2>Награда канала</h2>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group flex-2">
+                    <label for="reward-title">Название</label>
+                    <input type="text" id="reward-title" value="Добавить 7TV эмоут">
+                </div>
+                <div class="form-group flex-1">
+                    <label for="reward-cost">Стоимость</label>
+                    <input type="number" id="reward-cost" value="1000" min="1">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="reward-prompt">Описание награды</label>
+                <textarea id="reward-prompt" rows="2" placeholder="Текст, который увидят зрители при активации награды">Введите ссылку на 7TV эмоут (например: https://7tv.app/emotes/...)</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="send-chat-messages" checked>
+                    <span>Отправлять сообщение в чат о результате</span>
+                </label>
+            </div>
+
+            <button id="btn-create-reward" class="btn btn-primary">Создать награду</button>
+
+            <div id="rewards-list" style="display:none;">
+                <div class="section-header">
+                    <h3>Существующие награды</h3>
+                    <span class="form-hint" style="margin:0;">(нажмите, чтобы выбрать для отслеживания)</span>
+                </div>
+                <div id="rewards-container"></div>
+            </div>
+
+            <div id="selected-reward-info" class="active-emote-card" style="display:none;">
+                <h3>Отслеживаемая награда</h3>
+                <div id="selected-reward-container"></div>
+            </div>
+        </section>
+
+        <!-- Управление эмоутами -->
+        <section id="emote-management" class="card" style="display:none;">
+            <div class="card-header">
+                <h2>Поиск эмоутов</h2>
+            </div>
+
+            <div class="form-group">
+                <div class="input-row">
+                    <input type="text" id="emote-search" placeholder="Название эмоута...">
+                    <button id="btn-search-emote" class="btn btn-secondary">Найти</button>
+                </div>
+            </div>
+
+            <div id="search-results" class="emote-grid"></div>
+            <button id="btn-load-more-search" class="btn btn-ghost btn-block" style="display:none;">
+                Загрузить ещё
+            </button>
+
+            <div id="active-emote" class="active-emote-card" style="display:none;">
+                <h3>Активный эмоут</h3>
+                <div id="active-emote-container"></div>
+            </div>
+        </section>
+
+        <!-- Лог -->
+        <section id="log-section" class="card">
+            <div class="card-header">
+                <h2>Лог событий</h2>
+                <button id="btn-clear-log" class="btn btn-sm btn-outline">Очистить</button>
+            </div>
+            <div id="event-log" class="event-log">
+                <div class="log-entry info"><span class="log-time">[--:--:--]</span> Ожидание авторизации...</div>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
