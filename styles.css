@@ -1495,6 +1495,74 @@ header {
     margin-top: 16px;
 }
 
+/* ===== BETA INFO MODAL (WIP) ===== */
+
+.beta-info-text {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.beta-info-features {
+    background: var(--purple-dim);
+    border: 1px solid rgba(145, 70, 255, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin: 16px 0;
+}
+
+.beta-info-features p {
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+.beta-info-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.beta-info-features ul li {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding: 4px 0 4px 18px;
+    position: relative;
+}
+
+.beta-info-features ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--purple-hover);
+}
+
+.beta-support-cta {
+    text-align: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.beta-support-cta p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+/* ===== CLICKABLE BADGE ===== */
+
+.badge-clickable {
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.badge-clickable:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(145, 70, 255, 0.4);
+}
+
 /* ===== DASHBOARD ===== */
 
 .dashboard-header {

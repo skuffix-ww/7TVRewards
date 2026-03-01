@@ -227,6 +227,18 @@ function initListeners() {
         activateBeta(true);
     });
 
+    // Beta info modal (WIP) - click on changelog badge
+    const betaInfoModal = document.getElementById('beta-info-modal');
+    document.querySelector('.badge-clickable')?.addEventListener('click', () => {
+        betaInfoModal.style.display = 'flex';
+    });
+    document.getElementById('btn-close-beta-info').addEventListener('click', () => {
+        betaInfoModal.style.display = 'none';
+    });
+    betaInfoModal.addEventListener('click', (e) => {
+        if (e.target === betaInfoModal) betaInfoModal.style.display = 'none';
+    });
+
     // Dashboard tabs
     document.querySelectorAll('.dash-tab').forEach(tab => {
         tab.addEventListener('click', () => {
@@ -1306,7 +1318,7 @@ function activateBeta(reauth = false) {
 function deactivateBeta() {
     state.betaEnabled = false;
     saveState();
-    applyVersionDisplay('v1.3.5');
+    applyVersionDisplay('v1.3.6');
     updateBetaButton(false);
     document.getElementById('dashboard-section').style.display = 'none';
     log('Бета деактивирована', 'info');
