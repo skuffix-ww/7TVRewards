@@ -77,7 +77,7 @@
                 <div class="modal-body">
                     <div class="modal-logo">7TV<span>Rewards</span></div>
                     <div class="modal-version-row">
-                        <p class="modal-version" id="modal-version">v1.3.3</p>
+                        <p class="modal-version" id="modal-version">v1.3.5</p>
                         <button id="btn-version-archive" class="btn-archive" title="Архив версий">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -156,6 +156,19 @@
                             <li class="cl-new">Лидерборд зрителей по потраченным баллам</li>
                             <li class="cl-new">Активация через Архив версий (иконка в модалке «О приложении»)</li>
                             <li class="cl-info">Патч-ноут будет пополняться с добавлением новых функций в v2.0.0β</li>
+                        </ul>
+                    </div>
+                    <div class="changelog-entry">
+                        <div class="changelog-version">
+                            <span class="badge badge-info">v1.3.5</span>
+                            <span class="changelog-date">01.03.2026</span>
+                        </div>
+                        <ul class="changelog-list">
+                            <li class="cl-new">Поиск/фильтр эмоутов внутри загруженного набора</li>
+                            <li class="cl-new">Пагинация эмоутов набора — страницы вместо «Загрузить ещё»</li>
+                            <li class="cl-new">Пагинация результатов поиска 7TV — страницы вместо «Загрузить ещё»</li>
+                            <li class="cl-new">Пагинация списка наград канала</li>
+                            <li class="cl-fix">Исправлена версия в модалке «О приложении» и футере (v1.3.4 не обновилась)</li>
                         </ul>
                     </div>
                     <div class="changelog-entry">
@@ -337,10 +350,11 @@
                     <h3>Эмоуты в наборе</h3>
                     <span id="emotes-count" class="badge badge-info">0</span>
                 </div>
+                <div class="emote-set-search">
+                    <input type="text" id="emote-set-filter" placeholder="Фильтр по названию...">
+                </div>
                 <div id="emotes-container" class="emote-grid"></div>
-                <button id="btn-load-more-emotes" class="btn btn-ghost btn-block" style="display:none;">
-                    Загрузить ещё
-                </button>
+                <div id="emotes-pagination" class="pagination"></div>
             </div>
         </section>
 
@@ -393,6 +407,7 @@
                     <span class="form-hint" style="margin:0;">(нажмите, чтобы выбрать для отслеживания)</span>
                 </div>
                 <div id="rewards-container"></div>
+                <div id="rewards-pagination" class="pagination"></div>
             </div>
 
             <div id="selected-reward-info" class="active-emote-card" style="display:none;">
@@ -415,9 +430,7 @@
             </div>
 
             <div id="search-results" class="emote-grid"></div>
-            <button id="btn-load-more-search" class="btn btn-ghost btn-block" style="display:none;">
-                Загрузить ещё
-            </button>
+            <div id="search-pagination" class="pagination"></div>
 
             <div id="active-emote" class="active-emote-card" style="display:none;">
                 <h3>Активные эмоуты</h3>
@@ -526,7 +539,7 @@
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-divider"></div>
-        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.3.3</span></p>
+        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.3.5</span></p>
         <p class="footer-legal">Данный сервис не является официальным продуктом Twitch Interactive, Inc. или 7TV. Все
             торговые марки принадлежат их владельцам. Twitch, логотип Twitch и Channel Points являются товарными знаками
             Twitch Interactive, Inc. 7TV является независимым сервисом эмоутов.</p>

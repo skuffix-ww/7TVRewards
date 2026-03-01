@@ -1848,6 +1848,84 @@ header {
     transform: scale(1.02);
 }
 
+/* ===== PAGINATION ===== */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.page-btn:hover:not([disabled]) {
+    border-color: var(--purple);
+    color: var(--text-primary);
+    background: var(--purple-dim);
+}
+
+.page-btn.active {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: #fff;
+    cursor: default;
+}
+
+.page-btn[disabled] {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.page-ellipsis {
+    color: var(--text-muted);
+    padding: 0 4px;
+    font-size: 0.8rem;
+    line-height: 32px;
+}
+
+/* ===== EMOTE SET FILTER ===== */
+
+.emote-set-search {
+    margin-bottom: 10px;
+}
+
+.emote-set-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.8rem;
+    box-sizing: border-box;
+}
+
+.emote-set-search input:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px var(--purple-dim);
+}
+
 /* ===== LOGO EASTER EGG ===== */
 
 .logo-char {

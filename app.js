@@ -9,6 +9,7 @@ const CONFIG = {
 };
 
 const EMOTES_PER_PAGE = 24;
+const REWARDS_PER_PAGE = 5;
 
 // ==================== СОСТОЯНИЕ ====================
 
@@ -25,10 +26,13 @@ const state = {
     sendChatMessages: true,
     // pagination
     allSetEmotes: [],
-    displayedSetEmotes: 0,
+    setEmotePage: 1,
+    setEmoteFilter: '',
     searchQuery: '',
     searchPage: 1,
     searchHasMore: false,
+    rewardsPage: 1,
+    allRewards: [],
     // beta v2.0.0β
     betaEnabled: false,
     rewardCost: 0,
@@ -121,7 +125,11 @@ function initListeners() {
     });
     document.getElementById('emote-set-select').addEventListener('change', handleEmoteSetSelect);
     document.getElementById('btn-save-set').addEventListener('click', handleSaveEmoteSet);
-    document.getElementById('btn-load-more-emotes').addEventListener('click', showMoreSetEmotes);
+    document.getElementById('emote-set-filter').addEventListener('input', (e) => {
+        state.setEmoteFilter = e.target.value;
+        state.setEmotePage = 1;
+        renderSetEmotesPage();
+    });
 
     // Rewards
     document.getElementById('btn-create-reward').addEventListener('click', handleCreateReward);
@@ -154,7 +162,6 @@ function initListeners() {
     document.getElementById('emote-search').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleSearchEmote(true);
     });
-    document.getElementById('btn-load-more-search').addEventListener('click', () => handleSearchEmote(false));
 
     // Log
     document.getElementById('btn-clear-log').addEventListener('click', (e) => {
@@ -519,7 +526,6 @@ async function loadEmoteSet() {
     const container = document.getElementById('emotes-container');
     const section = document.getElementById('current-emotes');
     const countBadge = document.getElementById('emotes-count');
-    const loadMoreBtn = document.getElementById('btn-load-more-emotes');
 
     container.innerHTML = '<div class="no-data"><span class="loader"></span></div>';
     section.style.display = 'block';
@@ -530,17 +536,10 @@ async function loadEmoteSet() {
 
         const data = await res.json();
         state.allSetEmotes = data.emotes || [];
-        state.displayedSetEmotes = 0;
+        state.setEmotePage = 1;
 
         countBadge.textContent = state.allSetEmotes.length;
-        container.innerHTML = '';
-
-        if (state.allSetEmotes.length === 0) {
-            container.innerHTML = '<div class="no-data">Нет эмоутов в наборе</div>';
-            loadMoreBtn.style.display = 'none';
-        } else {
-            showMoreSetEmotes();
-        }
+        renderSetEmotesPage();
 
         const stvStatus = document.getElementById('seventv-status');
         stvStatus.textContent = 'Подключено';
@@ -549,7 +548,7 @@ async function loadEmoteSet() {
         log(`Загружено ${state.allSetEmotes.length} эмоутов`, 'success');
     } catch (err) {
         container.innerHTML = `<div class="no-data">Ошибка: ${err.message}</div>`;
-        loadMoreBtn.style.display = 'none';
+        document.getElementById('emotes-pagination').style.display = 'none';
 
         const stvStatus = document.getElementById('seventv-status');
         stvStatus.textContent = 'Ошибка';
@@ -559,25 +558,62 @@ async function loadEmoteSet() {
     }
 }
 
-function showMoreSetEmotes() {
+function renderSetEmotesPage() {
     const container = document.getElementById('emotes-container');
-    const loadMoreBtn = document.getElementById('btn-load-more-emotes');
-    const start = state.displayedSetEmotes;
-    const end = Math.min(start + EMOTES_PER_PAGE, state.allSetEmotes.length);
+    const paginationEl = document.getElementById('emotes-pagination');
+    const filter = state.setEmoteFilter.toLowerCase().trim();
 
-    for (let i = start; i < end; i++) {
-        const emote = state.allSetEmotes[i];
-        container.appendChild(createEmoteElement(emote, false));
-    }
+    const filtered = filter
+        ? state.allSetEmotes.filter(e => e.name.toLowerCase().includes(filter))
+        : state.allSetEmotes;
 
-    state.displayedSetEmotes = end;
+    const totalPages = Math.max(1, Math.ceil(filtered.length / EMOTES_PER_PAGE));
+    if (state.setEmotePage > totalPages) state.setEmotePage = totalPages;
 
-    if (end < state.allSetEmotes.length) {
-        loadMoreBtn.style.display = 'block';
-        loadMoreBtn.textContent = `Загрузить ещё (${state.allSetEmotes.length - end} осталось)`;
+    const start = (state.setEmotePage - 1) * EMOTES_PER_PAGE;
+    container.innerHTML = '';
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<div class="no-data">' + (filter ? 'Нет совпадений' : 'Нет эмоутов в наборе') + '</div>';
     } else {
-        loadMoreBtn.style.display = 'none';
+        filtered.slice(start, start + EMOTES_PER_PAGE).forEach(emote => container.appendChild(createEmoteElement(emote, false)));
     }
+
+    renderPagination(paginationEl, state.setEmotePage, totalPages, (page) => {
+        state.setEmotePage = page;
+        renderSetEmotesPage();
+    });
+}
+
+function renderPagination(container, currentPage, totalPages, onPageChange) {
+    if (totalPages <= 1) {
+        container.style.display = 'none';
+        return;
+    }
+    container.style.display = 'flex';
+
+    const parts = [];
+    const win = 2;
+    const lo = Math.max(1, currentPage - win);
+    const hi = Math.min(totalPages, currentPage + win);
+
+    if (lo > 1) parts.push(1);
+    if (lo > 2) parts.push('…');
+    for (let i = lo; i <= hi; i++) parts.push(i);
+    if (hi < totalPages - 1) parts.push('…');
+    if (hi < totalPages) parts.push(totalPages);
+
+    container.innerHTML =
+        `<button class="page-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>‹</button>` +
+        parts.map(p => p === '…'
+            ? `<span class="page-ellipsis">…</span>`
+            : `<button class="page-btn${p === currentPage ? ' active' : ''}" data-page="${p}">${p}</button>`
+        ).join('') +
+        `<button class="page-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+
+    container.querySelectorAll('.page-btn:not([disabled])').forEach(btn => {
+        btn.addEventListener('click', () => onPageChange(parseInt(btn.dataset.page)));
+    });
 }
 
 function createEmoteElement(emote, clickable) {
@@ -598,7 +634,7 @@ function createEmoteElement(emote, clickable) {
 async function handleSearchEmote(newSearch) {
     const input = document.getElementById('emote-search');
     const container = document.getElementById('search-results');
-    const loadMoreBtn = document.getElementById('btn-load-more-search');
+    const paginationEl = document.getElementById('search-pagination');
 
     if (newSearch) {
         const query = input.value.trim();
@@ -608,10 +644,10 @@ async function handleSearchEmote(newSearch) {
         }
         state.searchQuery = query;
         state.searchPage = 1;
-        container.innerHTML = '<div class="no-data"><span class="loader"></span></div>';
-    } else {
-        state.searchPage++;
     }
+
+    container.innerHTML = '<div class="no-data"><span class="loader"></span></div>';
+    paginationEl.style.display = 'none';
 
     try {
         const res = await fetch(`${CONFIG.SERVER_URL}/api/7tv/gql`, {
@@ -636,29 +672,39 @@ async function handleSearchEmote(newSearch) {
         const data = await res.json();
         const emotes = data.data?.emotes?.items || [];
 
-        if (newSearch) container.innerHTML = '';
+        container.innerHTML = '';
 
-        if (emotes.length === 0 && newSearch) {
+        if (emotes.length === 0 && state.searchPage === 1) {
             container.innerHTML = '<div class="no-data">Ничего не найдено</div>';
-            loadMoreBtn.style.display = 'none';
         } else {
-            emotes.forEach(emote => {
-                container.appendChild(createEmoteElement(emote, true));
-            });
+            emotes.forEach(emote => container.appendChild(createEmoteElement(emote, true)));
 
-            // Показываем "Загрузить ещё" если пришла полная страница
-            if (emotes.length >= EMOTES_PER_PAGE) {
-                loadMoreBtn.style.display = 'block';
-                loadMoreBtn.textContent = 'Загрузить ещё';
-            } else {
-                loadMoreBtn.style.display = 'none';
+            state.searchHasMore = emotes.length >= EMOTES_PER_PAGE;
+            const hasPrev = state.searchPage > 1;
+            const hasNext = state.searchHasMore;
+
+            if (hasPrev || hasNext) {
+                paginationEl.style.display = 'flex';
+                paginationEl.innerHTML =
+                    `<button class="page-btn" id="s-prev" ${!hasPrev ? 'disabled' : ''}>‹</button>` +
+                    `<span class="page-btn active" style="cursor:default;min-width:40px;">${state.searchPage}</span>` +
+                    `<button class="page-btn" id="s-next" ${!hasNext ? 'disabled' : ''}>›</button>`;
+
+                if (hasPrev) paginationEl.querySelector('#s-prev').addEventListener('click', () => {
+                    state.searchPage--;
+                    handleSearchEmote(false);
+                });
+                if (hasNext) paginationEl.querySelector('#s-next').addEventListener('click', () => {
+                    state.searchPage++;
+                    handleSearchEmote(false);
+                });
             }
 
-            if (newSearch) log(`Найдено эмоутов: ${emotes.length}+`, 'success');
+            if (newSearch) log(`Найдено: ${emotes.length}${state.searchHasMore ? '+' : ''}`, 'success');
         }
     } catch (err) {
         log(`Ошибка поиска: ${err.message}`, 'error');
-        loadMoreBtn.style.display = 'none';
+        container.innerHTML = '<div class="no-data">Ошибка поиска</div>';
     }
 }
 
@@ -860,36 +906,13 @@ async function loadChannelRewards() {
         if (!res.ok) throw new Error('Ошибка загрузки наград');
 
         const data = await res.json();
-        const rewards = data.data || [];
-
-        const listSection = document.getElementById('rewards-list');
-        const container = document.getElementById('rewards-container');
-        container.innerHTML = '';
-
-        if (rewards.length === 0) {
-            listSection.style.display = 'none';
-        } else {
-            listSection.style.display = 'block';
-            rewards.forEach(reward => {
-                const el = document.createElement('div');
-                el.className = 'reward-item clickable';
-                if (state.rewardId === reward.id) el.classList.add('selected');
-                el.innerHTML = `
-                    <div class="reward-info">
-                        <h4>${reward.title}</h4>
-                        <p>${reward.is_enabled ? 'Активна' : 'Неактивна'}${reward.is_user_input_required ? ' | Требует ввод' : ''}</p>
-                    </div>
-                    <span class="reward-cost">${reward.cost} pts</span>
-                `;
-                el.addEventListener('click', () => selectReward(reward));
-                container.appendChild(el);
-            });
-            log(`Наград: ${rewards.length}`, 'info');
-        }
+        state.allRewards = data.data || [];
+        state.rewardsPage = 1;
+        renderRewardsPage();
 
         // Если уже есть выбранная награда — показать и запустить слушатель
         if (state.rewardId) {
-            const selected = rewards.find(r => r.id === state.rewardId);
+            const selected = state.allRewards.find(r => r.id === state.rewardId);
             if (selected) {
                 showSelectedReward(selected);
                 startRewardListener();
@@ -900,16 +923,55 @@ async function loadChannelRewards() {
     }
 }
 
+function renderRewardsPage() {
+    const listSection = document.getElementById('rewards-list');
+    const container = document.getElementById('rewards-container');
+    const paginationEl = document.getElementById('rewards-pagination');
+    const rewards = state.allRewards;
+
+    if (rewards.length === 0) {
+        listSection.style.display = 'none';
+        return;
+    }
+
+    listSection.style.display = 'block';
+
+    const totalPages = Math.max(1, Math.ceil(rewards.length / REWARDS_PER_PAGE));
+    if (state.rewardsPage > totalPages) state.rewardsPage = totalPages;
+
+    const start = (state.rewardsPage - 1) * REWARDS_PER_PAGE;
+    const pageRewards = rewards.slice(start, start + REWARDS_PER_PAGE);
+
+    container.innerHTML = '';
+    pageRewards.forEach(reward => {
+        const el = document.createElement('div');
+        el.className = 'reward-item clickable';
+        if (state.rewardId === reward.id) el.classList.add('selected');
+        el.innerHTML = `
+            <div class="reward-info">
+                <h4>${reward.title}</h4>
+                <p>${reward.is_enabled ? 'Активна' : 'Неактивна'}${reward.is_user_input_required ? ' | Требует ввод' : ''}</p>
+            </div>
+            <span class="reward-cost">${reward.cost} pts</span>
+        `;
+        el.addEventListener('click', () => selectReward(reward));
+        container.appendChild(el);
+    });
+
+    renderPagination(paginationEl, state.rewardsPage, totalPages, (page) => {
+        state.rewardsPage = page;
+        renderRewardsPage();
+    });
+
+    if (state.rewardsPage === 1) log(`Наград: ${rewards.length}`, 'info');
+}
+
 function selectReward(reward) {
     state.rewardId = reward.id;
     state.rewardCost = reward.cost;
     saveState();
 
-    // Обновляем выделение
-    document.querySelectorAll('#rewards-container .reward-item').forEach(el => {
-        el.classList.toggle('selected', el.querySelector('.reward-info h4')?.textContent === reward.title);
-    });
-
+    renderRewardsPage();
     showSelectedReward(reward);
     startRewardListener();
 
@@ -1244,7 +1306,7 @@ function activateBeta(reauth = false) {
 function deactivateBeta() {
     state.betaEnabled = false;
     saveState();
-    applyVersionDisplay('v1.3.3');
+    applyVersionDisplay('v1.3.5');
     updateBetaButton(false);
     document.getElementById('dashboard-section').style.display = 'none';
     log('Бета деактивирована', 'info');
