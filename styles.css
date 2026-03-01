@@ -1172,6 +1172,39 @@ header {
     color: var(--purple-hover);
 }
 
+/* ===== COLLAPSIBLE CHANGELOG ENTRY ===== */
+.changelog-toggle {
+    cursor: pointer;
+    user-select: none;
+}
+
+.changelog-toggle:hover .cl-toggle-icon {
+    color: var(--text-primary);
+}
+
+.cl-toggle-icon {
+    margin-left: auto;
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.changelog-entry-collapsible.cl-collapsed .cl-toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.changelog-collapse {
+    max-height: 800px;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    opacity: 1;
+}
+
+.changelog-collapse.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
 .changelog-legend {
     display: flex;
     gap: 10px;
@@ -2020,6 +2053,78 @@ header {
     outline: none;
     border-color: var(--purple);
     box-shadow: 0 0 0 3px var(--purple-dim);
+}
+
+/* ===== TOASTS ===== */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1100;
+    pointer-events: none;
+}
+
+.toast {
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: inherit;
+    max-width: 300px;
+    border-left: 3px solid;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast.toast-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-success { background: var(--bg-elevated); border-color: var(--green);  color: var(--green); }
+.toast-error   { background: var(--bg-elevated); border-color: var(--red);    color: #ff6b6b; }
+.toast-warning { background: var(--bg-elevated); border-color: var(--yellow); color: var(--yellow); }
+.toast-info    { background: var(--bg-elevated); border-color: var(--purple); color: var(--purple-hover); }
+
+/* ===== EMOTE DELETE BUTTON ===== */
+.emote-item.deletable {
+    position: relative;
+}
+
+.emote-delete-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(235, 4, 0, 0.7);
+    color: #fff;
+    font-size: 0.6rem;
+    line-height: 18px;
+    text-align: center;
+    cursor: pointer;
+    display: none;
+    padding: 0;
+    transition: background 0.15s;
+}
+
+.emote-item.deletable:hover .emote-delete-btn {
+    display: block;
+}
+
+.emote-delete-btn:hover {
+    background: var(--red);
+}
+
+/* ===== SESSION BADGE ===== */
+.session-badge {
+    font-size: 0.7rem !important;
 }
 
 /* ===== LOGO EASTER EGG ===== */

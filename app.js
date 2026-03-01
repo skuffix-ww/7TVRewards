@@ -37,8 +37,12 @@ const state = {
     betaEnabled: false,
     rewardCost: 0,
     emoteHistory: [],        // [{id, userId, userName, emoteId, emoteName, timestamp, cost}] — cap 500
-    userModeration: {}       // {userId: {type:'ban'|'mute'|'block', until:timestamp|null, name:string}}
+    userModeration: {},      // {userId: {type:'ban'|'mute'|'block', until:timestamp|null, name:string}}
+    // v1.5.0
+    toastEnabled: true
 };
+
+let sessionCount = 0; // сбрасывается при перезагрузке, не сохраняется
 
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 
@@ -63,6 +67,9 @@ function loadState() {
         }
         if (state.sendChatMessages !== undefined) {
             document.getElementById('send-chat-messages').checked = state.sendChatMessages;
+        }
+        if (state.toastEnabled !== undefined) {
+            document.getElementById('toast-toggle').checked = state.toastEnabled;
         }
         // Миграция: activeEmote → activeEmotes
         if (state.activeEmote && !state.activeEmotes?.length) {
@@ -101,6 +108,7 @@ function saveState() {
         rewardId: state.rewardId,
         seventvToken: state.seventvToken,
         sendChatMessages: state.sendChatMessages,
+        toastEnabled: state.toastEnabled,
         // beta
         betaEnabled: state.betaEnabled,
         rewardCost: state.rewardCost,
@@ -135,6 +143,10 @@ function initListeners() {
     document.getElementById('btn-create-reward').addEventListener('click', handleCreateReward);
     document.getElementById('send-chat-messages').addEventListener('change', (e) => {
         state.sendChatMessages = e.target.checked;
+        saveState();
+    });
+    document.getElementById('toast-toggle').addEventListener('change', (e) => {
+        state.toastEnabled = e.target.checked;
         saveState();
     });
     document.getElementById('max-emote-slots').addEventListener('change', (e) => {
@@ -196,6 +208,12 @@ function initListeners() {
     });
     changelog.addEventListener('click', (e) => {
         if (e.target === changelog) changelog.style.display = 'none';
+    });
+
+    // Collapsible v2.0.0β entry
+    document.getElementById('cl-toggle-beta').addEventListener('click', () => {
+        document.getElementById('cl-body-beta').classList.toggle('collapsed');
+        document.getElementById('cl-entry-beta').classList.toggle('cl-collapsed');
     });
 
     // Version archive
@@ -291,6 +309,25 @@ function log(message, type = 'info') {
     el.insertBefore(entry, el.firstChild);
     while (el.children.length > 200) el.removeChild(el.lastChild);
     document.getElementById('log-count').textContent = el.children.length;
+}
+
+function showToast(message, type = 'info', duration = 3500) {
+    if (!state.toastEnabled) return;
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('toast-visible'));
+    setTimeout(() => {
+        toast.classList.remove('toast-visible');
+        toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+    }, duration);
+}
+
+function updateSessionCounter() {
+    const el = document.getElementById('session-count');
+    if (el) el.textContent = `+${sessionCount}`;
 }
 
 // ==================== АВТОРИЗАЦИЯ ====================
@@ -588,7 +625,7 @@ function renderSetEmotesPage() {
     if (filtered.length === 0) {
         container.innerHTML = '<div class="no-data">' + (filter ? 'Нет совпадений' : 'Нет эмоутов в наборе') + '</div>';
     } else {
-        filtered.slice(start, start + EMOTES_PER_PAGE).forEach(emote => container.appendChild(createEmoteElement(emote, false)));
+        filtered.slice(start, start + EMOTES_PER_PAGE).forEach(emote => container.appendChild(createEmoteElement(emote, false, true)));
     }
 
     renderPagination(paginationEl, state.setEmotePage, totalPages, (page) => {
@@ -628,15 +665,34 @@ function renderPagination(container, currentPage, totalPages, onPageChange) {
     });
 }
 
-function createEmoteElement(emote, clickable) {
+function createEmoteElement(emote, clickable, deletable = false) {
     const el = document.createElement('div');
-    el.className = `emote-item${clickable ? ' clickable' : ''}`;
+    el.className = `emote-item${clickable ? ' clickable' : ''}${deletable ? ' deletable' : ''}`;
     el.innerHTML = `
         <img src="https://cdn.7tv.app/emote/${emote.id}/2x.webp" alt="${emote.name}" loading="lazy">
         <span class="emote-name">${emote.name}</span>
+        ${deletable ? '<button class="emote-delete-btn" title="Удалить из набора">✕</button>' : ''}
     `;
     if (clickable) {
         el.addEventListener('click', () => selectEmote(emote));
+    }
+    if (deletable) {
+        el.querySelector('.emote-delete-btn').addEventListener('click', async (e) => {
+            e.stopPropagation();
+            try {
+                await removeEmoteFromSet(emote.id);
+                state.activeEmotes = state.activeEmotes.filter(ae => ae.id !== emote.id);
+                state.allSetEmotes = state.allSetEmotes.filter(ae => ae.id !== emote.id);
+                saveState();
+                renderSetEmotesPage();
+                document.getElementById('emotes-count').textContent = state.allSetEmotes.length;
+                log(`Эмоут "${emote.name}" удалён вручную`, 'info');
+                showToast(`Эмоут "${emote.name}" удалён`, 'success');
+            } catch (err) {
+                log(`Ошибка удаления: ${err.message}`, 'error');
+                showToast(`Ошибка: ${err.message}`, 'error');
+            }
+        });
     }
     return el;
 }
@@ -820,12 +876,16 @@ async function addEmoteToSet(emote) {
 
         const suffix = addedName !== emote.name ? ` (как "${addedName}")` : '';
         log(`Эмоут "${emote.name}" добавлен${suffix}!${state.slotsDisabled ? '' : ` (${state.activeEmotes.length}/${state.maxEmoteSlots})`}`, 'success');
+        showToast(`✦ ${emote.name} добавлен в набор!`, 'success');
+        sessionCount++;
+        updateSessionCounter();
         await loadEmoteSet();
         updateActiveEmotesDisplay();
 
         return true;
     } catch (err) {
         log(`Ошибка: ${err.message}`, 'error');
+        showToast(`Ошибка: ${err.message}`, 'error');
         return false;
     }
 }
@@ -1318,7 +1378,7 @@ function activateBeta(reauth = false) {
 function deactivateBeta() {
     state.betaEnabled = false;
     saveState();
-    applyVersionDisplay('v1.3.6');
+    applyVersionDisplay('v1.5.0');
     updateBetaButton(false);
     document.getElementById('dashboard-section').style.display = 'none';
     log('Бета деактивирована', 'info');

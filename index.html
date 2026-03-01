@@ -40,16 +40,8 @@
 
         <!-- Countdown Banner -->
         <div class="countdown-banner">
-            <div class="countdown-text">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                </svg>
-                <span>Сайту осталось примерно: <strong id="countdown-timer"></strong></span>
-            </div>
             <div class="countdown-donate">
-                <span>Хотите продлить?</span>
+                <span>Хотите поддержать проект?</span>
                 <a href="https://donatex.gg/donate/skuffix" target="_blank" class="donate-link">
                     <img src="https://donatex.gg/logo.svg" alt="Donatex" class="donate-icon">
                     Donatex
@@ -77,7 +69,7 @@
                 <div class="modal-body">
                     <div class="modal-logo">7TV<span>Rewards</span></div>
                     <div class="modal-version-row">
-                        <p class="modal-version" id="modal-version">v1.3.6</p>
+                        <p class="modal-version" id="modal-version">v1.5.0</p>
                         <button id="btn-version-archive" class="btn-archive" title="Архив версий">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -152,24 +144,49 @@
                         <span class="cl-legend cl-change">Изменение</span>
                         <span class="cl-legend cl-info">Инфо</span>
                     </div>
+                    <div class="changelog-entry changelog-entry-collapsible cl-collapsed" id="cl-entry-beta">
+                        <div class="changelog-version changelog-toggle" id="cl-toggle-beta">
+                            <button class="badge badge-beta badge-clickable" title="Подробнее о бета-версии">v2.0.0β</button>
+                            <span class="changelog-date">01.03.2026</span>
+                            <svg class="cl-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </div>
+                        <div class="changelog-collapse collapsed" id="cl-body-beta">
+                            <ul class="changelog-list">
+                                <li class="cl-new">WebSocket (Twitch EventSub) — мгновенные активации без поллинга каждые 5 сек</li>
+                                <li class="cl-new">Очередь эмоутов — несколько активаций одновременно обрабатываются по порядку с визуальным списком ожидания</li>
+                                <li class="cl-new">Мульти-набор — поддержка нескольких emote set'ов, переключение через разные награды</li>
+                                <li class="cl-new">OBS overlay — отдельная страница /overlay с анимацией добавления эмоута для стримов</li>
+                                <li class="cl-new">Экспорт/импорт настроек — сохранение полного конфига в JSON</li>
+                                <li class="cl-new">Светлая тема — переключатель тёмная/светлая</li>
+                                <li class="cl-new">Авто-удаление — при переполнении набора самый старый эмоут удаляется автоматически</li>
+                                <li class="cl-new">Cooldown зрителя — один зритель не может добавить эмоут чаще раза в N минут</li>
+                                <li class="cl-new">Блэклист эмоутов — запрет конкретных эмоутов по имени или тегу</li>
+                                <li class="cl-new">Дашборд: история эмоутов, модерация (бан, мут, блок), статистика, лидерборд</li>
+                                <li class="cl-new">Активация через Архив версий (иконка в модалке «О приложении»)</li>
+                                <li class="cl-info">Патч-ноут будет пополняться с добавлением новых функций в v2.0.0β</li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="changelog-entry">
                         <div class="changelog-version">
-                            <button class="badge badge-beta badge-clickable" title="Подробнее о бета-версии">v2.0.0β</button>
+                            <span class="badge badge-info">v1.5.0</span>
                             <span class="changelog-date">01.03.2026</span>
                         </div>
                         <ul class="changelog-list">
-                            <li class="cl-new">WebSocket (Twitch EventSub) — мгновенные активации без поллинга каждые 5 сек</li>
-                            <li class="cl-new">Очередь эмоутов — несколько активаций одновременно обрабатываются по порядку с визуальным списком ожидания</li>
-                            <li class="cl-new">Мульти-набор — поддержка нескольких emote set'ов, переключение через разные награды</li>
-                            <li class="cl-new">OBS overlay — отдельная страница /overlay с анимацией добавления эмоута для стримов</li>
-                            <li class="cl-new">Экспорт/импорт настроек — сохранение полного конфига в JSON</li>
-                            <li class="cl-new">Светлая тема — переключатель тёмная/светлая</li>
-                            <li class="cl-new">Авто-удаление — при переполнении набора самый старый эмоут удаляется автоматически</li>
-                            <li class="cl-new">Cooldown зрителя — один зритель не может добавить эмоут чаще раза в N минут</li>
-                            <li class="cl-new">Блэклист эмоутов — запрет конкретных эмоутов по имени или тегу</li>
-                            <li class="cl-new">Дашборд: история эмоутов, модерация (бан, мут, блок), статистика, лидерборд</li>
-                            <li class="cl-new">Активация через Архив версий (иконка в модалке «О приложении»)</li>
-                            <li class="cl-info">Патч-ноут будет пополняться с добавлением новых функций в v2.0.0β</li>
+                            <li class="cl-new">Всплывающие уведомления (toasts) при добавлении/ошибке эмоута — можно отключить в настройках</li>
+                            <li class="cl-new">Кнопка удаления эмоута из набора — наведите на эмоут и нажмите ✕</li>
+                            <li class="cl-new">Счётчик сессии в шапке лога — показывает сколько эмоутов добавлено за текущую сессию</li>
+                        </ul>
+                    </div>
+                    <div class="changelog-entry">
+                        <div class="changelog-version">
+                            <span class="badge badge-info">v1.3.7</span>
+                            <span class="changelog-date">01.03.2026</span>
+                        </div>
+                        <ul class="changelog-list">
+                            <li class="cl-new">Запись v2.0.0β в патч-ноутах теперь сворачивается — нажмите на заголовок чтобы раскрыть</li>
                         </ul>
                     </div>
                     <div class="changelog-entry">
@@ -178,7 +195,7 @@
                             <span class="changelog-date">01.03.2026</span>
                         </div>
                         <ul class="changelog-list">
-                            <li class="cl-fix">Добавлена легенда в патч-ноуты (✦ Новое, ✧ Исправление, ↻ Изменение, ℹ Инфо)</li>
+                            <li class="cl-new">Легенда в патч-ноутах (✦ Новое, ✧ Исправление, ↻ Изменение, ℹ Инфо)</li>
                         </ul>
                     </div>
                     <div class="changelog-entry">
@@ -410,6 +427,10 @@
                         <input type="checkbox" id="send-chat-messages" checked>
                         <span>Отправлять сообщение в чат о результате</span>
                     </label>
+                    <label class="checkbox-label" style="margin-top:6px;">
+                        <input type="checkbox" id="toast-toggle" checked>
+                        <span>Показывать всплывающие уведомления</span>
+                    </label>
                 </div>
                 <div class="form-group flex-1">
                     <label for="max-emote-slots">Слотов эмоутов</label>
@@ -517,6 +538,7 @@
                     </svg>
                     <h2>Лог событий</h2>
                     <span id="log-count" class="badge badge-info" style="font-size:0.7rem;">0</span>
+                    <span id="session-count" class="badge badge-success session-badge" title="Эмоутов добавлено за сессию">+0</span>
                 </div>
                 <button id="btn-clear-log" class="btn btn-sm btn-outline">Очистить</button>
             </div>
@@ -562,7 +584,7 @@
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-divider"></div>
-        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.3.6</span></p>
+        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.5.0</span></p>
         <p class="footer-legal">Данный сервис не является официальным продуктом Twitch Interactive, Inc. или 7TV. Все
             торговые марки принадлежат их владельцам. Twitch, логотип Twitch и Channel Points являются товарными знаками
             Twitch Interactive, Inc. 7TV является независимым сервисом эмоутов.</p>
@@ -682,6 +704,7 @@
         </div>
     </div>
 
+    <div id="toast-container"></div>
     <script src="app.js"></script>
 </body>
 

@@ -1,4 +1,4 @@
 {
     "claudeCode.allowDangerouslySkipPermissions": true,
-    "claudeCode.disableLoginPrompt": true
+    "claudeCode.disableLoginPrompt": false
 }
