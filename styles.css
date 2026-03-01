@@ -223,8 +223,15 @@ header {
     transition: filter 0.3s ease;
 }
 
-.logo.logo-bursting {
-    animation: logoShimmer 0.6s ease-in-out infinite alternate;
+.logo.logo-cycling {
+    position: relative;
+    overflow: visible;
+    animation: logoShimmer 0.5s ease-in-out infinite alternate;
+    color: transparent !important;
+}
+
+.logo.logo-cycling span {
+    color: transparent !important;
 }
 
 @keyframes logoShimmer {
@@ -1846,22 +1853,28 @@ header {
     transform: scale(1.02);
 }
 
-/* ===== LOGO EASTER EGG BURST ===== */
+/* ===== LOGO EASTER EGG ===== */
 
-@keyframes emoteBurst {
-    0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
-    60%  { opacity: 0.9; }
-    100% { opacity: 0; transform: translate(var(--bx), var(--by)) scale(0.15) rotate(var(--br)); }
+.logo-emote-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 10;
 }
 
-.emote-burst-particle {
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-    animation: emoteBurst var(--bd, 0.85s) cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+.logo-emote-overlay.logo-emote-pop {
+    animation: emotePopIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes emotePopIn {
+    0%   { transform: translate(-50%, -50%) scale(0.2) rotate(-12deg); opacity: 0; }
+    55%  { transform: translate(-50%, -50%) scale(1.25) rotate(6deg);  opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1)    rotate(0deg);  opacity: 1; }
 }
 
 /* ===== RESPONSIVE ===== */

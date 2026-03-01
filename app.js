@@ -1607,46 +1607,33 @@ function triggerLogoBurst() {
 
     _burstActive = true;
     const logo = document.querySelector('.logo');
-    logo.classList.add('logo-bursting');
+    logo.classList.add('logo-cycling');
 
-    const DURATION = 5000;   // 5 секунд
-    const INTERVAL = 250;    // каждые 250мс — новая волна
-    const PER_WAVE = 5;      // частиц за волну
+    const overlay = document.createElement('img');
+    overlay.className = 'logo-emote-overlay';
+    overlay.alt = '';
+    logo.appendChild(overlay);
 
-    const timer = setInterval(() => {
-        const rect = logo.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
+    const DURATION = 5000;
+    const INTERVAL = 280;
+    let idx = Math.floor(Math.random() * state.allSetEmotes.length);
 
-        for (let i = 0; i < PER_WAVE; i++) {
-            const emote = state.allSetEmotes[Math.floor(Math.random() * state.allSetEmotes.length)];
-            const img = document.createElement('img');
-            img.className = 'emote-burst-particle';
-            img.src = `https://cdn.7tv.app/emote/${emote.id}/2x.webp`;
-            img.alt = '';
+    function showNext() {
+        const emote = state.allSetEmotes[idx % state.allSetEmotes.length];
+        idx++;
+        overlay.src = `https://cdn.7tv.app/emote/${emote.id}/2x.webp`;
+        overlay.classList.remove('logo-emote-pop');
+        void overlay.offsetWidth; // reflow
+        overlay.classList.add('logo-emote-pop');
+    }
 
-            // Случайное направление и дальность
-            const angle = Math.random() * Math.PI * 2;
-            const dist  = 120 + Math.random() * 220;
-            const bx = Math.cos(angle) * dist;
-            const by = Math.sin(angle) * dist;
-            const br = (Math.random() - 0.5) * 600;
-            const bd = (0.65 + Math.random() * 0.5).toFixed(2);
-            const size = 32 + Math.random() * 24;
-
-            img.style.cssText =
-                `left:${cx - size / 2}px;top:${cy - size / 2}px;` +
-                `width:${size}px;height:${size}px;` +
-                `--bx:${bx}px;--by:${by}px;--br:${br}deg;--bd:${bd}s;`;
-
-            document.body.appendChild(img);
-            setTimeout(() => img.remove(), parseFloat(bd) * 1000 + 100);
-        }
-    }, INTERVAL);
+    showNext();
+    const timer = setInterval(showNext, INTERVAL);
 
     setTimeout(() => {
         clearInterval(timer);
-        logo.classList.remove('logo-bursting');
+        overlay.remove();
+        logo.classList.remove('logo-cycling');
         _burstActive = false;
     }, DURATION);
 }
