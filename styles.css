@@ -227,11 +227,6 @@ header {
     position: relative;
     overflow: visible;
     animation: logoShimmer 0.5s ease-in-out infinite alternate;
-    color: transparent !important;
-}
-
-.logo.logo-cycling span {
-    color: transparent !important;
 }
 
 @keyframes logoShimmer {
@@ -1855,26 +1850,38 @@ header {
 
 /* ===== LOGO EASTER EGG ===== */
 
-.logo-emote-overlay {
+.logo-char {
+    display: inline-block;
+    position: relative;
+}
+
+.logo-char-purple { color: var(--purple); }
+.logo-char-teal   { color: var(--teal); }
+
+.logo-char.logo-char-replaced {
+    color: transparent;
+}
+
+.logo-char-emote {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 52px;
-    height: 52px;
+    width: 36px;
+    height: 36px;
     object-fit: contain;
     pointer-events: none;
-    z-index: 10;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 1;
 }
 
-.logo-emote-overlay.logo-emote-pop {
-    animation: emotePopIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+.logo-char-emote.logo-char-emote-pop {
+    animation: charEmotePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-@keyframes emotePopIn {
-    0%   { transform: translate(-50%, -50%) scale(0.2) rotate(-12deg); opacity: 0; }
-    55%  { transform: translate(-50%, -50%) scale(1.25) rotate(6deg);  opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(1)    rotate(0deg);  opacity: 1; }
+@keyframes charEmotePop {
+    0%   { transform: translate(-50%, -50%) scale(0)   rotate(-15deg); opacity: 0; }
+    60%  { transform: translate(-50%, -50%) scale(1.4) rotate(5deg);   opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.1) rotate(0deg);   opacity: 1; }
 }
 
 /* ===== RESPONSIVE ===== */

@@ -1607,33 +1607,50 @@ function triggerLogoBurst() {
 
     _burstActive = true;
     const logo = document.querySelector('.logo');
+    const DURATION = 5000;
+    const STEP = 150; // ms между буквами
+
+    // Разбиваем на отдельные буквы с сохранением цветов
+    logo.innerHTML =
+        [...'7TV'].map(c => `<span class="logo-char logo-char-purple">${c}</span>`).join('') +
+        [...'Rewards'].map(c => `<span class="logo-char logo-char-teal">${c}</span>`).join('');
+
     logo.classList.add('logo-cycling');
 
-    const overlay = document.createElement('img');
-    overlay.className = 'logo-emote-overlay';
-    overlay.alt = '';
-    logo.appendChild(overlay);
-
-    const DURATION = 5000;
-    const INTERVAL = 280;
+    const charSpans = [...logo.querySelectorAll('.logo-char')];
     let idx = Math.floor(Math.random() * state.allSetEmotes.length);
 
-    function showNext() {
-        const emote = state.allSetEmotes[idx % state.allSetEmotes.length];
-        idx++;
-        overlay.src = `https://cdn.7tv.app/emote/${emote.id}/2x.webp`;
-        overlay.classList.remove('logo-emote-pop');
-        void overlay.offsetWidth; // reflow
-        overlay.classList.add('logo-emote-pop');
+    function wave() {
+        charSpans.forEach((span, i) => {
+            setTimeout(() => {
+                if (!_burstActive) return;
+                const emote = state.allSetEmotes[idx % state.allSetEmotes.length];
+                idx++;
+
+                let img = span.querySelector('img');
+                if (!img) {
+                    img = document.createElement('img');
+                    img.className = 'logo-char-emote';
+                    img.alt = '';
+                    span.appendChild(img);
+                    span.classList.add('logo-char-replaced');
+                }
+
+                img.src = `https://cdn.7tv.app/emote/${emote.id}/2x.webp`;
+                img.classList.remove('logo-char-emote-pop');
+                void img.offsetWidth;
+                img.classList.add('logo-char-emote-pop');
+            }, i * STEP);
+        });
     }
 
-    showNext();
-    const timer = setInterval(showNext, INTERVAL);
+    wave();
+    const waveTimer = setInterval(wave, charSpans.length * STEP + 300);
 
     setTimeout(() => {
-        clearInterval(timer);
-        overlay.remove();
+        clearInterval(waveTimer);
         logo.classList.remove('logo-cycling');
+        logo.innerHTML = '7TV<span>Rewards</span>';
         _burstActive = false;
     }, DURATION);
 }
