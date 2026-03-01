@@ -255,6 +255,9 @@ function initListeners() {
     // History list event delegation for mod buttons
     document.getElementById('history-list').addEventListener('click', handleHistoryClick);
 
+    // Logo easter egg
+    document.querySelector('.logo').addEventListener('click', triggerLogoBurst);
+
     handleAuthCallback();
 }
 
@@ -1593,6 +1596,59 @@ function spawnFloatingEmote() {
     setTimeout(() => {
         if (img.parentNode) img.remove();
     }, duration * 1000 + 500);
+}
+
+// ==================== LOGO EASTER EGG ====================
+
+let _burstActive = false;
+
+function triggerLogoBurst() {
+    if (_burstActive || !state.allSetEmotes || state.allSetEmotes.length === 0) return;
+
+    _burstActive = true;
+    const logo = document.querySelector('.logo');
+    logo.classList.add('logo-bursting');
+
+    const DURATION = 5000;   // 5 секунд
+    const INTERVAL = 250;    // каждые 250мс — новая волна
+    const PER_WAVE = 5;      // частиц за волну
+
+    const timer = setInterval(() => {
+        const rect = logo.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        for (let i = 0; i < PER_WAVE; i++) {
+            const emote = state.allSetEmotes[Math.floor(Math.random() * state.allSetEmotes.length)];
+            const img = document.createElement('img');
+            img.className = 'emote-burst-particle';
+            img.src = `https://cdn.7tv.app/emote/${emote.id}/2x.webp`;
+            img.alt = '';
+
+            // Случайное направление и дальность
+            const angle = Math.random() * Math.PI * 2;
+            const dist  = 120 + Math.random() * 220;
+            const bx = Math.cos(angle) * dist;
+            const by = Math.sin(angle) * dist;
+            const br = (Math.random() - 0.5) * 600;
+            const bd = (0.65 + Math.random() * 0.5).toFixed(2);
+            const size = 32 + Math.random() * 24;
+
+            img.style.cssText =
+                `left:${cx - size / 2}px;top:${cy - size / 2}px;` +
+                `width:${size}px;height:${size}px;` +
+                `--bx:${bx}px;--by:${by}px;--br:${br}deg;--bd:${bd}s;`;
+
+            document.body.appendChild(img);
+            setTimeout(() => img.remove(), parseFloat(bd) * 1000 + 100);
+        }
+    }, INTERVAL);
+
+    setTimeout(() => {
+        clearInterval(timer);
+        logo.classList.remove('logo-bursting');
+        _burstActive = false;
+    }, DURATION);
 }
 
 // ==================== TROUBLESHOOTING ====================

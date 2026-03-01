@@ -218,6 +218,18 @@ header {
     font-weight: 700;
     color: var(--purple);
     letter-spacing: -0.5px;
+    cursor: pointer;
+    user-select: none;
+    transition: filter 0.3s ease;
+}
+
+.logo.logo-bursting {
+    animation: logoShimmer 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes logoShimmer {
+    from { filter: drop-shadow(0 0 8px var(--purple)) drop-shadow(0 0 4px var(--purple)); }
+    to   { filter: drop-shadow(0 0 14px var(--teal))  drop-shadow(0 0 6px var(--purple)); }
 }
 
 .logo span {
@@ -1832,6 +1844,24 @@ header {
     border-color: var(--purple);
     background: var(--purple-dim);
     transform: scale(1.02);
+}
+
+/* ===== LOGO EASTER EGG BURST ===== */
+
+@keyframes emoteBurst {
+    0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+    60%  { opacity: 0.9; }
+    100% { opacity: 0; transform: translate(var(--bx), var(--by)) scale(0.15) rotate(var(--br)); }
+}
+
+.emote-burst-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    animation: emoteBurst var(--bd, 0.85s) cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
 }
 
 /* ===== RESPONSIVE ===== */
