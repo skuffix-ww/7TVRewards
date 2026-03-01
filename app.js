@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadState();
     initListeners();
     checkAuth();
-    startCountdown();
     startFloatingEmotes();
 });
 
@@ -1298,40 +1297,6 @@ async function markRedemptionStatus(redemptionId, status) {
     }
 }
 
-// ==================== ОТСЧЁТ ====================
-
-function startCountdown() {
-    // Дедлайн — 1 месяц от запуска (28 марта 2026)
-    const deadline = new Date('2026-03-28T23:59:59');
-    const timerEl = document.getElementById('countdown-timer');
-
-    function update() {
-        const now = new Date();
-        const diff = deadline - now;
-
-        if (diff <= 0) {
-            timerEl.textContent = 'Время вышло!';
-            timerEl.style.color = 'var(--red)';
-            return;
-        }
-
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        timerEl.textContent = `${days}д ${hours}ч ${minutes}м ${seconds}с`;
-
-        if (days <= 3) {
-            timerEl.style.color = 'var(--red)';
-        } else if (days <= 7) {
-            timerEl.style.color = 'var(--yellow)';
-        }
-    }
-
-    update();
-    setInterval(update, 1000);
-}
 
 // ==================== БЕТА v2.0.0β ====================
 
