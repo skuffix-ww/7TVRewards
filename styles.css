@@ -1172,6 +1172,34 @@ header {
     color: var(--purple-hover);
 }
 
+.changelog-legend {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.cl-legend {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cl-legend.cl-new  { background: rgba(0, 250, 154, 0.1); color: var(--green); }
+.cl-legend.cl-new::before  { content: '✦'; }
+.cl-legend.cl-fix  { background: rgba(255, 215, 0, 0.1); color: var(--yellow); }
+.cl-legend.cl-fix::before  { content: '✧'; }
+.cl-legend.cl-change { background: rgba(169, 112, 255, 0.1); color: var(--purple-hover); }
+.cl-legend.cl-change::before { content: '↻'; }
+.cl-legend.cl-info { background: rgba(169, 112, 255, 0.1); color: var(--purple-hover); }
+.cl-legend.cl-info::before { content: 'ℹ'; }
+
 .modal-footer-text {
     font-size: 0.8rem;
     color: var(--text-muted);
