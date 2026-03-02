@@ -11,6 +11,175 @@ const CONFIG = {
 const EMOTES_PER_PAGE = 24;
 const REWARDS_PER_PAGE = 5;
 
+// ==================== ПЕРЕВОДЫ ====================
+
+const TRANSLATIONS = {
+    ru: {
+        subtitle: 'Twitch Channel Points → 7TV Emotes',
+        'auth.title': 'Авторизация',
+        'auth.login': 'Войти через Twitch',
+        'auth.logout': 'Выйти',
+        'auth.role': 'Стример',
+        'seventv.title': '7TV Настройки',
+        'seventv.token.label': 'Токен 7TV',
+        'seventv.token.save': 'Сохранить',
+        'seventv.set.label': 'Набор эмоутов',
+        'seventv.set.first': 'Сначала авторизуйтесь',
+        'seventv.set.manual': 'Или введите ID набора вручную',
+        'seventv.set.placeholder': 'ID набора эмоутов',
+        'seventv.set.load': 'Загрузить',
+        'seventv.emotes.title': 'Эмоуты в наборе',
+        'seventv.filter.placeholder': 'Фильтр по названию...',
+        'seventv.sort.default': 'По умолчанию',
+        'seventv.sort.asc': 'А → Я',
+        'seventv.sort.desc': 'Я → А',
+        'reward.title': 'Награда канала',
+        'reward.name': 'Название',
+        'reward.cost': 'Стоимость',
+        'reward.desc': 'Описание награды',
+        'reward.chat.toggle': 'Отправлять сообщение в чат о результате',
+        'reward.toast.toggle': 'Показывать всплывающие уведомления',
+        'reward.slots.label': 'Слотов эмоутов',
+        'reward.slots.unlimited': 'Без ограничений',
+        'reward.slots.hint': 'Сколько эмоутов хранить до удаления старых',
+        'reward.slots.hint.unlimited': 'Эмоуты накапливаются без удаления',
+        'reward.create': 'Создать награду',
+        'reward.existing': 'Существующие награды',
+        'reward.existing.hint': '(нажмите, чтобы выбрать для отслеживания)',
+        'reward.tracked': 'Отслеживаемая награда',
+        'emote.search.title': 'Поиск эмоутов',
+        'emote.search.placeholder': 'Название эмоута...',
+        'emote.search.btn': 'Найти',
+        'emote.active': 'Активные эмоуты',
+        'dash.title': 'Дашборд',
+        'dash.clear': 'Очистить историю',
+        'dash.history': 'История',
+        'dash.stats': 'Статистика',
+        'dash.search': 'Поиск по имени или эмоуту...',
+        'dash.pts': 'Баллов потрачено',
+        'dash.emotes': 'Эмоутов добавлено',
+        'dash.users': 'Уникальных зрителей',
+        'dash.top': 'Топ зрителей',
+        'log.title': 'Лог событий',
+        'log.clear': 'Очистить',
+        'log.filter': 'Фильтр лога...',
+        'ts.title': 'Не работает 7TV?',
+        'info.title': 'О приложении',
+        'info.desc': 'Автоматическая замена 7TV эмоутов через награды канала Twitch. Зрители покупают эмоуты за баллы канала — система добавляет их в набор.',
+        'info.dev': 'Разработка',
+        'info.for': 'Сделано для',
+        'info.thanks': 'Спасибки',
+        'info.other': 'Другие интересные проекты',
+        'info.other.note': 'не мои',
+        'info.donate': 'Поддержать проект:',
+        'changelog.title': 'Патч-ноуты',
+        'settings.language': 'Язык / Language',
+        'auth.status.ok': 'Авторизован',
+        'auth.status.not': 'Не авторизован',
+        'seventv.status.ok': 'Подключено',
+        'seventv.status.not': 'Не найден',
+        'seventv.status.error': 'Ошибка',
+        'seventv.set.fail': 'Не удалось загрузить',
+        'token.empty': 'Токен пуст',
+        'token.saved': 'Токен сохранён',
+        'token.saved.warn': 'Токен сохранён (не удалось проверить)',
+        'nodata.history': 'История пуста',
+        'nodata.search': 'Ничего не найдено',
+        'log.waiting': 'Ожидание авторизации...',
+        'banner.support': 'Мотивация и оплата серверов:',
+        'cl.new': 'Новое',
+        'cl.fix': 'Исправление',
+        'cl.change': 'Изменение',
+        'cl.info': 'Инфо',
+        'seventv.status.init': 'Не подключено',
+        'seventv.token.placeholder': 'Вставьте ваш 7TV токен',
+        'token.hint': 'Откройте <a href="https://7tv.app" target="_blank">7tv.app</a>, залогиньтесь → F12 → Network → обновите страницу → найдите любой запрос к <code>7tv.io</code> → скопируйте значение заголовка <code>Authorization</code> (без "Bearer ")',
+        'reward.prompt.placeholder': 'Текст, который увидят зрители при активации награды',
+    },
+    en: {
+        subtitle: 'Twitch Channel Points → 7TV Emotes',
+        'auth.title': 'Authorization',
+        'auth.login': 'Login with Twitch',
+        'auth.logout': 'Logout',
+        'auth.role': 'Streamer',
+        'seventv.title': '7TV Settings',
+        'seventv.token.label': '7TV Token',
+        'seventv.token.save': 'Save',
+        'seventv.set.label': 'Emote Set',
+        'seventv.set.first': 'Authorize first',
+        'seventv.set.manual': 'Or enter set ID manually',
+        'seventv.set.placeholder': 'Emote set ID',
+        'seventv.set.load': 'Load',
+        'seventv.emotes.title': 'Emotes in set',
+        'seventv.filter.placeholder': 'Filter by name...',
+        'seventv.sort.default': 'Default',
+        'seventv.sort.asc': 'A → Z',
+        'seventv.sort.desc': 'Z → A',
+        'reward.title': 'Channel Reward',
+        'reward.name': 'Name',
+        'reward.cost': 'Cost',
+        'reward.desc': 'Reward description',
+        'reward.chat.toggle': 'Send chat message on result',
+        'reward.toast.toggle': 'Show toast notifications',
+        'reward.slots.label': 'Emote slots',
+        'reward.slots.unlimited': 'Unlimited',
+        'reward.slots.hint': 'How many emotes to keep before removing oldest',
+        'reward.slots.hint.unlimited': 'Emotes accumulate without deletion',
+        'reward.create': 'Create reward',
+        'reward.existing': 'Existing rewards',
+        'reward.existing.hint': '(click to select for tracking)',
+        'reward.tracked': 'Tracked reward',
+        'emote.search.title': 'Emote Search',
+        'emote.search.placeholder': 'Emote name...',
+        'emote.search.btn': 'Find',
+        'emote.active': 'Active emotes',
+        'dash.title': 'Dashboard',
+        'dash.clear': 'Clear history',
+        'dash.history': 'History',
+        'dash.stats': 'Statistics',
+        'dash.search': 'Search by name or emote...',
+        'dash.pts': 'Points spent',
+        'dash.emotes': 'Emotes added',
+        'dash.users': 'Unique viewers',
+        'dash.top': 'Top viewers',
+        'log.title': 'Event Log',
+        'log.clear': 'Clear',
+        'log.filter': 'Filter log...',
+        'ts.title': '7TV not working?',
+        'info.title': 'About',
+        'info.desc': 'Automatic 7TV emote replacement via Twitch channel rewards. Viewers buy emotes with channel points — the system adds them to the set.',
+        'info.dev': 'Development',
+        'info.for': 'Made for',
+        'info.thanks': 'Credits',
+        'info.other': 'Other interesting projects',
+        'info.other.note': 'not mine',
+        'info.donate': 'Support the project:',
+        'changelog.title': 'Patch Notes',
+        'settings.language': 'Язык / Language',
+        'auth.status.ok': 'Authorized',
+        'auth.status.not': 'Not authorized',
+        'seventv.status.ok': 'Connected',
+        'seventv.status.not': 'Not found',
+        'seventv.status.error': 'Error',
+        'seventv.set.fail': 'Failed to load',
+        'token.empty': 'Token empty',
+        'token.saved': 'Token saved',
+        'token.saved.warn': 'Token saved (could not verify)',
+        'nodata.history': 'History empty',
+        'nodata.search': 'Nothing found',
+        'log.waiting': 'Waiting for authorization...',
+        'banner.support': 'Motivation and server costs:',
+        'cl.new': 'New',
+        'cl.fix': 'Fix',
+        'cl.change': 'Change',
+        'cl.info': 'Info',
+        'seventv.status.init': 'Not connected',
+        'seventv.token.placeholder': 'Paste your 7TV token',
+        'token.hint': 'Open <a href="https://7tv.app" target="_blank">7tv.app</a>, log in → F12 → Network → refresh the page → find any request to <code>7tv.io</code> → copy the <code>Authorization</code> header value (without "Bearer ")',
+        'reward.prompt.placeholder': 'Text that viewers will see when activating the reward',
+    }
+};
+
 // ==================== СОСТОЯНИЕ ====================
 
 const state = {
@@ -39,7 +208,15 @@ const state = {
     emoteHistory: [],        // [{id, userId, userName, emoteId, emoteName, timestamp, cost}] — cap 500
     userModeration: {},      // {userId: {type:'ban'|'mute'|'block', until:timestamp|null, name:string}}
     // v1.5.0
-    toastEnabled: true
+    toastEnabled: true,
+    // v1.5.1
+    setEmoteSort: 'default',
+    // v1.5.2
+    language: 'ru',
+    // v1.5.3 advanced mode chat messages (empty = use default)
+    chatMsgSuccess: '',
+    chatMsgFail: '',
+    chatMsgDuplicate: ''
 };
 
 let sessionCount = 0; // сбрасывается при перезагрузке, не сохраняется
@@ -48,6 +225,7 @@ let sessionCount = 0; // сбрасывается при перезагрузк�
 
 document.addEventListener('DOMContentLoaded', () => {
     loadState();
+    applyTranslations();
     initListeners();
     checkAuth();
     startFloatingEmotes();
@@ -70,6 +248,7 @@ function loadState() {
         if (state.toastEnabled !== undefined) {
             document.getElementById('toast-toggle').checked = state.toastEnabled;
         }
+        if (!state.language) state.language = 'ru';
         // Миграция: activeEmote → activeEmotes
         if (state.activeEmote && !state.activeEmotes?.length) {
             state.activeEmotes = [state.activeEmote];
@@ -81,7 +260,6 @@ function loadState() {
         if (state.slotsDisabled) {
             document.getElementById('slots-unlimited').checked = true;
             document.getElementById('max-emote-slots').disabled = true;
-            document.getElementById('slots-hint').textContent = 'Эмоуты накапливаются без удаления';
         }
         // Beta state
         if (!Array.isArray(state.emoteHistory)) state.emoteHistory = [];
@@ -91,6 +269,19 @@ function loadState() {
             document.getElementById('dashboard-section').style.display = 'block';
             updateBetaButton(true);
             renderDashboard();
+        }
+        // v1.5.3 — populate advanced mode inputs
+        if (state.chatMsgSuccess) {
+            const el = document.getElementById('chat-msg-success');
+            if (el) el.value = state.chatMsgSuccess;
+        }
+        if (state.chatMsgFail) {
+            const el = document.getElementById('chat-msg-fail');
+            if (el) el.value = state.chatMsgFail;
+        }
+        if (state.chatMsgDuplicate) {
+            const el = document.getElementById('chat-msg-duplicate');
+            if (el) el.value = state.chatMsgDuplicate;
         }
     }
 }
@@ -108,11 +299,16 @@ function saveState() {
         seventvToken: state.seventvToken,
         sendChatMessages: state.sendChatMessages,
         toastEnabled: state.toastEnabled,
+        language: state.language,
         // beta
         betaEnabled: state.betaEnabled,
         rewardCost: state.rewardCost,
         emoteHistory: state.emoteHistory,
-        userModeration: state.userModeration
+        userModeration: state.userModeration,
+        // v1.5.3
+        chatMsgSuccess: state.chatMsgSuccess,
+        chatMsgFail: state.chatMsgFail,
+        chatMsgDuplicate: state.chatMsgDuplicate
     }));
 }
 
@@ -137,6 +333,25 @@ function initListeners() {
         state.setEmotePage = 1;
         renderSetEmotesPage();
     });
+    document.getElementById('emote-set-sort').addEventListener('change', (e) => {
+        state.setEmoteSort = e.target.value;
+        renderSetEmotesPage();
+    });
+
+    // Scroll top
+    const btnScrollTop = document.getElementById('btn-scroll-top');
+    window.addEventListener('scroll', () => {
+        btnScrollTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+    });
+    btnScrollTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // Log filter
+    document.getElementById('log-filter').addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        document.querySelectorAll('#event-log .log-entry').forEach(entry => {
+            entry.style.display = entry.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    });
 
     // Rewards
     document.getElementById('btn-create-reward').addEventListener('click', handleCreateReward);
@@ -147,6 +362,13 @@ function initListeners() {
     document.getElementById('toast-toggle').addEventListener('change', (e) => {
         state.toastEnabled = e.target.checked;
         saveState();
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            state.language = btn.dataset.lang;
+            saveState();
+            applyTranslations();
+        });
     });
     document.getElementById('max-emote-slots').addEventListener('change', (e) => {
         const val = parseInt(e.target.value);
@@ -161,11 +383,28 @@ function initListeners() {
         state.slotsDisabled = e.target.checked;
         document.getElementById('max-emote-slots').disabled = e.target.checked;
         document.getElementById('slots-hint').textContent = e.target.checked
-            ? 'Эмоуты накапливаются без удаления'
-            : 'Сколько эмоутов хранить до удаления старых';
+            ? t('reward.slots.hint.unlimited')
+            : t('reward.slots.hint');
         saveState();
         log(e.target.checked ? 'Слоты отключены — эмоуты без ограничений' : `Слоты включены: ${state.maxEmoteSlots}`, 'info');
         updateActiveEmotesDisplay();
+    });
+
+    // Advanced Mode toggle
+    document.getElementById('btn-advanced-toggle').addEventListener('click', () => {
+        const content = document.getElementById('advanced-mode-content');
+        const arrow = document.querySelector('#btn-advanced-toggle .advanced-arrow');
+        const isOpen = content.classList.contains('open');
+        content.classList.toggle('open');
+        arrow.textContent = isOpen ? '▼' : '▲';
+    });
+    // Advanced Mode inputs
+    const advancedInputs = { 'chat-msg-success': 'chatMsgSuccess', 'chat-msg-fail': 'chatMsgFail', 'chat-msg-duplicate': 'chatMsgDuplicate' };
+    Object.entries(advancedInputs).forEach(([id, key]) => {
+        document.getElementById(id).addEventListener('input', (e) => {
+            state[key] = e.target.value;
+            saveState();
+        });
     });
 
     // Search
@@ -310,12 +549,16 @@ function log(message, type = 'info') {
     document.getElementById('log-count').textContent = el.children.length;
 }
 
-function showToast(message, type = 'info', duration = 3500) {
+function showToast(message, type = 'info', duration = 3500, link = null) {
     if (!state.toastEnabled) return;
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    toast.textContent = message;
+    if (link) {
+        toast.innerHTML = `<a href="${link}" target="_blank" class="toast-link">${message}</a>`;
+    } else {
+        toast.textContent = message;
+    }
     container.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add('toast-visible'));
     setTimeout(() => {
@@ -415,7 +658,7 @@ function updateAuthUI(authed) {
     document.getElementById('user-info').style.display = authed ? 'flex' : 'none';
 
     const status = document.getElementById('auth-status');
-    status.textContent = authed ? 'Подключено' : 'Не авторизован';
+    status.textContent = authed ? t('auth.status.ok') : t('auth.status.not');
     status.className = `badge ${authed ? 'badge-success' : 'badge-warning'}`;
 
     document.getElementById('seventv-section').style.display = authed ? 'block' : 'none';
@@ -433,7 +676,7 @@ async function saveSeventvToken() {
 
     if (!token) {
         log('Введите токен 7TV', 'warning');
-        statusEl.innerHTML = '<span class="badge badge-warning">Токен пуст</span>';
+        statusEl.innerHTML = `<span class="badge badge-warning">${t('token.empty')}</span>`;
         return;
     }
 
@@ -457,10 +700,10 @@ async function saveSeventvToken() {
         if (res.status === 401 || res.status === 403) {
             throw new Error('Невалидный токен');
         }
-        statusEl.innerHTML = '<span class="badge badge-success">Токен сохранён</span>';
+        statusEl.innerHTML = `<span class="badge badge-success">${t('token.saved')}</span>`;
         log('Токен 7TV сохранён и проверен', 'success');
     } catch (err) {
-        statusEl.innerHTML = '<span class="badge badge-warning">Токен сохранён (не удалось проверить)</span>';
+        statusEl.innerHTML = `<span class="badge badge-warning">${t('token.saved.warn')}</span>`;
         log(`Токен сохранён, но проверка не прошла: ${err.message}`, 'warning');
     }
 }
@@ -521,16 +764,16 @@ async function load7TVUserData() {
         }
 
         const stvStatus = document.getElementById('seventv-status');
-        stvStatus.textContent = 'Подключено';
+        stvStatus.textContent = t('seventv.status.ok');
         stvStatus.className = 'badge badge-success';
 
         log(`7TV: найдено ${emoteSets.length || 1} наборов`, 'success');
     } catch (err) {
-        select.innerHTML = '<option value="">Не удалось загрузить</option>';
+        select.innerHTML = `<option value="">${t('seventv.set.fail')}</option>`;
         select.disabled = true;
 
         const stvStatus = document.getElementById('seventv-status');
-        stvStatus.textContent = 'Не найден';
+        stvStatus.textContent = t('seventv.status.not');
         stvStatus.className = 'badge badge-error';
 
         log(`7TV: ${err.message}`, 'error');
@@ -588,9 +831,10 @@ async function loadEmoteSet() {
 
         countBadge.textContent = state.allSetEmotes.length;
         renderSetEmotesPage();
+        updateActiveEmotesDisplay();
 
         const stvStatus = document.getElementById('seventv-status');
-        stvStatus.textContent = 'Подключено';
+        stvStatus.textContent = t('seventv.status.ok');
         stvStatus.className = 'badge badge-success';
 
         log(`Загружено ${state.allSetEmotes.length} эмоутов`, 'success');
@@ -599,7 +843,7 @@ async function loadEmoteSet() {
         document.getElementById('emotes-pagination').style.display = 'none';
 
         const stvStatus = document.getElementById('seventv-status');
-        stvStatus.textContent = 'Ошибка';
+        stvStatus.textContent = t('seventv.status.error');
         stvStatus.className = 'badge badge-error';
 
         log(`Ошибка загрузки набора: ${err.message}`, 'error');
@@ -611,20 +855,23 @@ function renderSetEmotesPage() {
     const paginationEl = document.getElementById('emotes-pagination');
     const filter = state.setEmoteFilter.toLowerCase().trim();
 
-    const filtered = filter
+    let emotes = filter
         ? state.allSetEmotes.filter(e => e.name.toLowerCase().includes(filter))
-        : state.allSetEmotes;
+        : [...state.allSetEmotes];
 
-    const totalPages = Math.max(1, Math.ceil(filtered.length / EMOTES_PER_PAGE));
+    if (state.setEmoteSort === 'asc') emotes.sort((a, b) => a.name.localeCompare(b.name));
+    else if (state.setEmoteSort === 'desc') emotes.sort((a, b) => b.name.localeCompare(a.name));
+
+    const totalPages = Math.max(1, Math.ceil(emotes.length / EMOTES_PER_PAGE));
     if (state.setEmotePage > totalPages) state.setEmotePage = totalPages;
 
     const start = (state.setEmotePage - 1) * EMOTES_PER_PAGE;
     container.innerHTML = '';
 
-    if (filtered.length === 0) {
+    if (emotes.length === 0) {
         container.innerHTML = '<div class="no-data">' + (filter ? 'Нет совпадений' : 'Нет эмоутов в наборе') + '</div>';
     } else {
-        filtered.slice(start, start + EMOTES_PER_PAGE).forEach(emote => container.appendChild(createEmoteElement(emote, false, true)));
+        emotes.slice(start, start + EMOTES_PER_PAGE).forEach(emote => container.appendChild(createEmoteElement(emote, false, true)));
     }
 
     renderPagination(paginationEl, state.setEmotePage, totalPages, (page) => {
@@ -676,6 +923,11 @@ function createEmoteElement(emote, clickable, deletable = false) {
         el.addEventListener('click', () => selectEmote(emote));
     }
     if (deletable) {
+        el.addEventListener('click', (e) => {
+            if (!e.target.closest('.emote-delete-btn')) {
+                window.open(`https://7tv.app/emotes/${emote.id}`, '_blank');
+            }
+        });
         el.querySelector('.emote-delete-btn').addEventListener('click', async (e) => {
             e.stopPropagation();
             try {
@@ -742,7 +994,7 @@ async function handleSearchEmote(newSearch) {
         container.innerHTML = '';
 
         if (emotes.length === 0 && state.searchPage === 1) {
-            container.innerHTML = '<div class="no-data">Ничего не найдено</div>';
+            container.innerHTML = `<div class="no-data">${t('nodata.search')}</div>`;
         } else {
             emotes.forEach(emote => container.appendChild(createEmoteElement(emote, true)));
 
@@ -823,7 +1075,7 @@ async function addEmoteToSet(emote) {
     const duplicateById = state.allSetEmotes.find(e => e.id === emote.id);
     if (duplicateById) {
         log(`Эмоут "${emote.name}" уже есть в наборе!`, 'warning');
-        return false;
+        return 'duplicate';
     }
 
     try {
@@ -875,7 +1127,7 @@ async function addEmoteToSet(emote) {
 
         const suffix = addedName !== emote.name ? ` (как "${addedName}")` : '';
         log(`Эмоут "${emote.name}" добавлен${suffix}!${state.slotsDisabled ? '' : ` (${state.activeEmotes.length}/${state.maxEmoteSlots})`}`, 'success');
-        showToast(`✦ ${emote.name} добавлен в набор!`, 'success');
+        showToast(`✦ ${emote.name} добавлен в набор!`, 'success', 3500, `https://7tv.app/emotes/${emote.id}`);
         sessionCount++;
         updateSessionCounter();
         await loadEmoteSet();
@@ -1195,9 +1447,9 @@ async function processRedemption(redemption) {
 
         log(`Найден: ${emote.name}`, 'info');
 
-        const success = await addEmoteToSet(emote);
+        const result = await addEmoteToSet(emote);
 
-        if (success) {
+        if (result === true) {
             // Запись в историю
             state.emoteHistory.unshift({
                 id: crypto.randomUUID(),
@@ -1214,6 +1466,9 @@ async function processRedemption(redemption) {
 
             await sendChatNotification(userName, emote.name, true);
             await markRedemptionStatus(redemption.id, 'FULFILLED');
+        } else if (result === 'duplicate') {
+            await sendChatNotification(userName, emote.name, false, 'emote_duplicate');
+            await markRedemptionStatus(redemption.id, 'CANCELED');
         } else {
             await sendChatNotification(userName, emote.name, false, 'Ошибка добавления');
             await markRedemptionStatus(redemption.id, 'CANCELED');
@@ -1230,12 +1485,20 @@ async function processRedemption(redemption) {
 async function sendChatNotification(userName, emoteName, success, reason) {
     if (!state.sendChatMessages) return;
 
+    const fill = (tmpl, user, emote) =>
+        tmpl.replace(/\{user\}/g, user || '').replace(/\{emote\}/g, emote || '');
+
     let message;
     if (success) {
-        message = `[7TV] Эмоут "${emoteName}" добавлен по запросу ${userName}!`;
+        const tmpl = state.chatMsgSuccess || '[7TV] {emote} добавлен по запросу {user}!';
+        message = fill(tmpl, userName, emoteName);
+    } else if (reason === 'emote_duplicate') {
+        const tmpl = state.chatMsgDuplicate || '[7TV] {user}, эмоут {emote} уже есть в наборе!';
+        message = fill(tmpl, userName, emoteName);
     } else {
-        message = `[7TV] Не удалось добавить эмоут для ${userName}.`;
-        if (reason) message += ` Причина: ${reason}`;
+        const tmpl = state.chatMsgFail || '[7TV] Не удалось добавить эмоут для {user}.';
+        message = fill(tmpl, userName, emoteName);
+        if (reason && reason !== 'Ошибка добавления') message += ` Причина: ${reason}`;
     }
 
     try {
@@ -1343,7 +1606,7 @@ function activateBeta(reauth = false) {
 function deactivateBeta() {
     state.betaEnabled = false;
     saveState();
-    applyVersionDisplay('v1.5.0');
+    applyVersionDisplay('v1.5.3');
     updateBetaButton(false);
     document.getElementById('dashboard-section').style.display = 'none';
     log('Бета деактивирована', 'info');
@@ -1369,7 +1632,7 @@ function renderHistoryTab() {
     }
 
     if (items.length === 0) {
-        container.innerHTML = '<div class="no-data">' + (filterVal ? 'Ничего не найдено' : 'История пуста') + '</div>';
+        container.innerHTML = `<div class="no-data">${filterVal ? t('nodata.search') : t('nodata.history')}</div>`;
         return;
     }
 
@@ -1754,6 +2017,152 @@ function triggerLogoBurst() {
     }, DURATION);
 }
 
+// ==================== I18N ====================
+
+function t(key) {
+    const lang = state.language || 'ru';
+    return (TRANSLATIONS[lang] || TRANSLATIONS.ru)[key] ?? key;
+}
+
+function applyTranslations() {
+    const T = TRANSLATIONS[state.language] || TRANSLATIONS.ru;
+    const set = (sel, key) => {
+        const el = document.querySelector(sel);
+        if (el && T[key] !== undefined) el.textContent = T[key];
+    };
+    const setPH = (id, key) => {
+        const el = document.getElementById(id);
+        if (el && T[key] !== undefined) el.placeholder = T[key];
+    };
+
+    // data-i18n: textContent
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (T[key] !== undefined) el.textContent = T[key];
+    });
+    // data-i18n-placeholder
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        if (T[key] !== undefined) el.placeholder = T[key];
+    });
+
+    // Header
+    set('.subtitle', 'subtitle');
+
+    // Auth
+    set('#auth-section .card-header h2', 'auth.title');
+    set('#btn-logout', 'auth.logout');
+    set('.user-role', 'auth.role');
+
+    // 7TV Settings
+    set('#seventv-section .card-header h2', 'seventv.title');
+    const lbl7tvToken = document.querySelector('label[for="seventv-token"]');
+    if (lbl7tvToken) lbl7tvToken.textContent = T['seventv.token.label'];
+    set('#btn-save-token', 'seventv.token.save');
+    const lblEmoteSet = document.querySelector('label[for="emote-set-select"]');
+    if (lblEmoteSet) lblEmoteSet.textContent = T['seventv.set.label'];
+    // Manual ID label has data-i18n already
+    setPH('emote-set-id', 'seventv.set.placeholder');
+    set('#btn-save-set', 'seventv.set.load');
+    set('#current-emotes .section-header h3', 'seventv.emotes.title');
+    setPH('emote-set-filter', 'seventv.filter.placeholder');
+    const sortSel = document.getElementById('emote-set-sort');
+    if (sortSel && sortSel.options.length >= 3) {
+        sortSel.options[0].text = T['seventv.sort.default'];
+        sortSel.options[1].text = T['seventv.sort.asc'];
+        sortSel.options[2].text = T['seventv.sort.desc'];
+    }
+    const firstOpt = document.querySelector('#emote-set-select option[value=""]');
+    if (firstOpt) firstOpt.text = T['seventv.set.first'];
+
+    // Rewards
+    set('#rewards-section .card-header h2', 'reward.title');
+    const lblName = document.querySelector('label[for="reward-title"]');
+    if (lblName) lblName.textContent = T['reward.name'];
+    const lblCost = document.querySelector('label[for="reward-cost"]');
+    if (lblCost) lblCost.textContent = T['reward.cost'];
+    const lblDesc = document.querySelector('label[for="reward-prompt"]');
+    if (lblDesc) lblDesc.textContent = T['reward.desc'];
+    // slots label has data-i18n; checkbox spans have data-i18n — handled above
+    // slots-hint: re-apply depending on unlimited state
+    const slotsHint = document.getElementById('slots-hint');
+    if (slotsHint) slotsHint.textContent = state.slotsDisabled ? T['reward.slots.hint.unlimited'] : T['reward.slots.hint'];
+    set('#rewards-list .section-header h3', 'reward.existing');
+    const existHint = document.querySelector('#rewards-list .section-header .form-hint');
+    if (existHint) existHint.textContent = T['reward.existing.hint'];
+    set('#selected-reward-info h3', 'reward.tracked');
+
+    // Emote management
+    set('#emote-management .card-header h2', 'emote.search.title');
+    setPH('emote-search', 'emote.search.placeholder');
+    set('#btn-search-emote', 'emote.search.btn');
+    set('#active-emote h3', 'emote.active');
+
+    // Dashboard
+    set('#dashboard-section h2', 'dash.title');
+    set('#btn-clear-history', 'dash.clear');
+    const histTab = document.querySelector('.dash-tab[data-tab="history"]');
+    if (histTab) histTab.textContent = T['dash.history'];
+    const statsTab = document.querySelector('.dash-tab[data-tab="stats"]');
+    if (statsTab) statsTab.textContent = T['dash.stats'];
+    setPH('history-filter', 'dash.search');
+    const statPts = document.getElementById('stat-total-pts');
+    if (statPts?.nextElementSibling) statPts.nextElementSibling.textContent = T['dash.pts'];
+    const statEmotes = document.getElementById('stat-total-emotes');
+    if (statEmotes?.nextElementSibling) statEmotes.nextElementSibling.textContent = T['dash.emotes'];
+    const statUsers = document.getElementById('stat-unique-users');
+    if (statUsers?.nextElementSibling) statUsers.nextElementSibling.textContent = T['dash.users'];
+    set('.leaderboard-title', 'dash.top');
+
+    // Log
+    set('#log-section h2', 'log.title');
+    set('#btn-clear-log', 'log.clear');
+    setPH('log-filter', 'log.filter');
+
+    // Troubleshooting
+    set('.troubleshooting-title h3', 'ts.title');
+
+    // Info modal
+    set('#info-modal .modal-header h2', 'info.title');
+    set('#info-modal .modal-desc', 'info.desc');
+    const credH = document.querySelectorAll('.modal-credits h3');
+    if (credH[0]) credH[0].textContent = T['info.dev'];
+    if (credH[1]) credH[1].textContent = T['info.for'];
+    if (credH[2]) credH[2].textContent = T['info.thanks'];
+    set('.modal-donate > p', 'info.donate');
+
+    // Changelog modal
+    set('#changelog-modal .modal-header h2', 'changelog.title');
+
+    // Token hint (contains HTML links/code tags)
+    const tokenHint = document.getElementById('token-hint');
+    if (tokenHint) tokenHint.innerHTML = T['token.hint'];
+
+    // Auth status badge (static initial state only — don't override dynamic state)
+    const authStatus = document.getElementById('auth-status');
+    if (authStatus && authStatus.classList.contains('badge-warning')) {
+        authStatus.textContent = T['auth.status.not'];
+    }
+
+    // 7TV status badge (static initial state only)
+    const stvStatus = document.getElementById('seventv-status');
+    if (stvStatus && stvStatus.classList.contains('badge-warning')) {
+        stvStatus.textContent = T['seventv.status.init'];
+    }
+
+    // Initial log entry (only if it's still the default placeholder)
+    const firstLog = document.querySelector('#event-log .log-entry');
+    if (firstLog && firstLog.querySelector('.log-time')?.textContent === '[--:--:--]') {
+        firstLog.childNodes[firstLog.childNodes.length - 1].textContent = ' ' + T['log.waiting'];
+    }
+
+    // Sync lang toggle buttons
+    const lang = state.language || 'ru';
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+}
+
 // ==================== TROUBLESHOOTING ====================
 
 function toggleTroubleshooting() {
@@ -1769,4 +2178,12 @@ function toggleTroubleshooting() {
             card.classList.add('open');
         }
     }
+}
+
+function openReyohoho1080p() {
+    const isFirefox = /Firefox\//i.test(navigator.userAgent);
+    const url = isFirefox
+        ? 'https://addons.mozilla.org/ru/firefox/addon/reyohoho-twitch-proxy/'
+        : 'https://chromewebstore.google.com/detail/reyohoho-twitch-proxy-108/ohgphcndclpcmbglhldmnagagdbmkoef?authuser=0&hl=ru';
+    window.open(url, '_blank');
 }
