@@ -1606,7 +1606,7 @@ function activateBeta(reauth = false) {
 function deactivateBeta() {
     state.betaEnabled = false;
     saveState();
-    applyVersionDisplay('v1.5.3');
+    applyVersionDisplay('v1.5.4');
     updateBetaButton(false);
     document.getElementById('dashboard-section').style.display = 'none';
     log('Бета деактивирована', 'info');

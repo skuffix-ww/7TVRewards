@@ -70,7 +70,7 @@
                 <div class="modal-body">
                     <div class="modal-logo">7TV<span>Rewards</span></div>
                     <div class="modal-version-row">
-                        <p class="modal-version" id="modal-version">v1.5.3</p>
+                        <p class="modal-version" id="modal-version">v1.5.4</p>
                         <button id="btn-version-archive" class="btn-archive" title="Архив версий">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -209,6 +209,16 @@
                                 <li class="cl-info">Патч-ноут будет пополняться с добавлением новых функций в v2.0.0β</li>
                             </ul>
                         </div>
+                    </div>
+                    <div class="changelog-entry">
+                        <div class="changelog-version">
+                            <span class="badge badge-info">v1.5.4</span>
+                            <span class="changelog-date">03.03.2026</span>
+                        </div>
+                        <ul class="changelog-list">
+                            <li class="cl-fix">Секция «Не работает 7TV?» перенесена внутрь контейнера — больше не занимает весь экран</li>
+                            <li class="cl-fix">Иконки в секции «Не работает 7TV?» заменены на SVG</li>
+                        </ul>
                     </div>
                     <div class="changelog-entry">
                         <div class="changelog-version">
@@ -482,7 +492,7 @@
         <!-- Награды -->
         <section id="rewards-section" class="card" style="display:none;">
             <div class="card-header">
-                <h2>Награда канала</h2>
+                <h2>Награда канала <svg class="channel-points-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="9" fill="#9146ff"/><circle cx="10" cy="10" r="4" fill="rgba(0,0,0,0.4)"/></svg></h2>
             </div>
 
             <div class="form-row">
@@ -656,80 +666,92 @@
                 </div>
             </div>
         </section>
-    </div>
 
-    <!-- Не работает 7TV? -->
-    <section class="troubleshooting-section">
-        <div class="troubleshooting-card">
-            <div class="troubleshooting-header" onclick="toggleTroubleshooting()">
-                <div class="troubleshooting-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="8" x2="12" y2="12" />
-                        <line x1="12" y1="16" x2="12.01" y2="16" />
-                    </svg>
+        <!-- Не работает 7TV? -->
+        <section class="troubleshooting-section">
+            <div class="troubleshooting-card">
+                <div class="troubleshooting-header" onclick="toggleTroubleshooting()">
+                    <div class="troubleshooting-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="12" />
+                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                    </div>
+                    <div class="troubleshooting-title">
+                        <h3>Не работает 7TV?</h3>
+                        <span class="troubleshooting-arrow">▼</span>
+                    </div>
                 </div>
-                <div class="troubleshooting-title">
-                    <h3>Не работает 7TV?</h3>
-                    <span class="troubleshooting-arrow">▼</span>
-                </div>
-            </div>
-            <div id="troubleshooting-content" class="troubleshooting-body">
-                <div class="troubleshooting-content">
-                    <div class="ts-grid">
-                        <div class="ts-item">
-                            <div class="ts-item-icon">🔑</div>
-                            <div class="ts-item-body">
-                                <strong id="ts-1-title">Токен 7TV истёк</strong>
-                                <p id="ts-1-desc">Зайдите на <a href="https://7tv.app" target="_blank">7tv.app</a> → F12 → Network → обновите страницу → скопируйте заголовок <code>Authorization</code> из запроса к <code>7tv.io</code> (без «Bearer »).</p>
+                <div id="troubleshooting-content" class="troubleshooting-body">
+                    <div class="troubleshooting-content">
+                        <div class="ts-grid">
+                            <div class="ts-item">
+                                <div class="ts-item-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg>
+                                </div>
+                                <div class="ts-item-body">
+                                    <strong id="ts-1-title">Токен 7TV истёк</strong>
+                                    <p id="ts-1-desc">Зайдите на <a href="https://7tv.app" target="_blank">7tv.app</a> → F12 → Network → обновите страницу → скопируйте заголовок <code>Authorization</code> из запроса к <code>7tv.io</code> (без «Bearer »).</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="ts-item">
-                            <div class="ts-item-icon">🌐</div>
-                            <div class="ts-item-body">
-                                <strong id="ts-2-title">7TV недоступен в регионе</strong>
-                                <p id="ts-2-desc">Включите VPN или прокси и смените регион. Если сайт открывается, но API не отвечает — проблема скорее всего в блокировке на уровне провайдера.</p>
+                            <div class="ts-item">
+                                <div class="ts-item-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                </div>
+                                <div class="ts-item-body">
+                                    <strong id="ts-2-title">7TV недоступен в регионе</strong>
+                                    <p id="ts-2-desc">Включите VPN или прокси и смените регион. Если сайт открывается, но API не отвечает — проблема скорее всего в блокировке на уровне провайдера.</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="ts-item">
-                            <div class="ts-item-icon">📦</div>
-                            <div class="ts-item-body">
-                                <strong id="ts-3-title">Набор эмоутов не загружается</strong>
-                                <p id="ts-3-desc">Выберите набор из выпадающего списка — если 7TV привязан к Twitch-аккаунту, он подтянется автоматически. Или введите ID набора вручную (скопируйте из URL на 7tv.app).</p>
+                            <div class="ts-item">
+                                <div class="ts-item-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                                </div>
+                                <div class="ts-item-body">
+                                    <strong id="ts-3-title">Набор эмоутов не загружается</strong>
+                                    <p id="ts-3-desc">Выберите набор из выпадающего списка — если 7TV привязан к Twitch-аккаунту, он подтянется автоматически. Или введите ID набора вручную (скопируйте из URL на 7tv.app).</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="ts-item">
-                            <div class="ts-item-icon">⚠️</div>
-                            <div class="ts-item-body">
-                                <strong id="ts-4-title">Эмоут не добавляется (conflicting name)</strong>
-                                <p id="ts-4-desc">Эмоут с таким именем уже существует в наборе. Система автоматически добавит суффикс (_2, _3...). Если ошибка повторяется — удалите старый эмоут на 7tv.app вручную.</p>
+                            <div class="ts-item">
+                                <div class="ts-item-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                </div>
+                                <div class="ts-item-body">
+                                    <strong id="ts-4-title">Эмоут не добавляется (conflicting name)</strong>
+                                    <p id="ts-4-desc">Эмоут с таким именем уже существует в наборе. Система автоматически добавит суффикс (_2, _3...). Если ошибка повторяется — удалите старый эмоут на 7tv.app вручную.</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="ts-item">
-                            <div class="ts-item-icon">🔄</div>
-                            <div class="ts-item-body">
-                                <strong id="ts-5-title">Награда не срабатывает</strong>
-                                <p id="ts-5-desc">Выберите награду из списка — это запускает слушатель (polling раз в 5 сек). Убедитесь что авторизация Twitch активна и зритель ввёл корректную ссылку на 7tv.app/emotes/...</p>
+                            <div class="ts-item">
+                                <div class="ts-item-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                                </div>
+                                <div class="ts-item-body">
+                                    <strong id="ts-5-title">Награда не срабатывает</strong>
+                                    <p id="ts-5-desc">Выберите награду из списка — это запускает слушатель (polling раз в 5 сек). Убедитесь что авторизация Twitch активна и зритель ввёл корректную ссылку на 7tv.app/emotes/...</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="ts-item">
-                            <div class="ts-item-icon">🗑️</div>
-                            <div class="ts-item-body">
-                                <strong id="ts-6-title">Сайт ведёт себя странно / сбросить всё</strong>
-                                <p id="ts-6-desc">F12 → Application → Local Storage → удалите ключ <code>7tv-rewards-state</code>. После обновления страницы всё сбросится до начального состояния.</p>
+                            <div class="ts-item">
+                                <div class="ts-item-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                </div>
+                                <div class="ts-item-body">
+                                    <strong id="ts-6-title">Сайт ведёт себя странно / сбросить всё</strong>
+                                    <p id="ts-6-desc">F12 → Application → Local Storage → удалите ключ <code>7tv-rewards-state</code>. После обновления страницы всё сбросится до начального состояния.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-divider"></div>
-        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.5.3</span></p>
+        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.5.4</span></p>
         <p class="footer-legal" id="footer-legal-1">Данный сервис не является официальным продуктом Twitch Interactive, Inc. или 7TV. Все
             торговые марки принадлежат их владельцам. Twitch, логотип Twitch и Channel Points являются товарными знаками
             Twitch Interactive, Inc. 7TV является независимым сервисом эмоутов.</p>
