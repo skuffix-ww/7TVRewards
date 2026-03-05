@@ -3,6 +3,4 @@ node_modules/
 .DS_Store
 dist/
 build/
-CLAUDE.md/
-GEMINI.md/
 .env/
