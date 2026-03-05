@@ -1,6 +1,8 @@
-# 7TV Rewards
+<p align="center">
+  <img src="logo.svg" alt="7TV Rewards" width="340">
+</p>
 
-> Зрители покупают эмоуты за баллы канала — система сразу добавляет их в 7TV набор. Без ручной работы.
+<p align="center">Зрители покупают эмоуты за баллы канала — система сразу добавляет их в 7TV набор. Без ручной работы.</p>
 
 ---
 
@@ -216,9 +218,10 @@ npm run dev
 
 Если приложение было полезно:
 
-- [Donatex](https://donatex.gg/donate/skuffix)
-- [DonationAlerts](https://www.donationalerts.com/r/skuffix508)
+- [![Donatex](https://donatex.gg/logo.svg)](https://donatex.gg/donate/skuffix) [Donatex](https://donatex.gg/donate/skuffix)
+- [![DonationAlerts](https://www.donationalerts.com/favicon.ico)](https://www.donationalerts.com/r/skuffix508) [DonationAlerts](https://www.donationalerts.com/r/skuffix508)
 
 ---
 
 *Сделано для [lostidze](https://twitch.tv/lostidze) · by [skuffix-ww](https://github.com/skuffix-ww) · MIT License*
+
