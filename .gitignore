@@ -5,3 +5,4 @@ dist/
 build/
 CLAUDE.md/
 GEMINI.md/
+.env/
