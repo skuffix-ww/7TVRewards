@@ -218,8 +218,8 @@ npm run dev
 
 Если приложение было полезно:
 
-- [![Donatex](https://donatex.gg/logo.svg)](https://donatex.gg/donate/skuffix) [Donatex](https://donatex.gg/donate/skuffix)
-- [![DonationAlerts](https://www.donationalerts.com/favicon.ico)](https://www.donationalerts.com/r/skuffix508) [DonationAlerts](https://www.donationalerts.com/r/skuffix508)
+- <a href="https://donatex.gg/donate/skuffix"><img src="https://donatex.gg/logo.svg" width="16" height="16"> Donatex</a>
+- <a href="https://www.donationalerts.com/r/skuffix508"><img src="https://www.donationalerts.com/favicon.ico" width="16" height="16"> DonationAlerts</a>
 
 ---
 
