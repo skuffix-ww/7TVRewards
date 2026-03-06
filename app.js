@@ -187,13 +187,12 @@ const state = {
     userId: null,
     broadcasterId: null,
     emoteSetId: null,
-    activeEmotes: [],       // очередь добавленных эмоутов [{id, name}, ...]
-    maxEmoteSlots: 1,       // сколько эмоутов можно добавить до удаления старых
-    slotsDisabled: false,   // если true — удалять старые эмоуты не надо
+    activeEmotes: [],
+    maxEmoteSlots: 1,
+    slotsDisabled: false,
     rewardId: null,
     seventvToken: null,
     sendChatMessages: true,
-    // pagination
     allSetEmotes: [],
     setEmotePage: 1,
     setEmoteFilter: '',
@@ -202,24 +201,19 @@ const state = {
     searchHasMore: false,
     rewardsPage: 1,
     allRewards: [],
-    // beta v2.0.0β
     betaEnabled: false,
     rewardCost: 0,
-    emoteHistory: [],        // [{id, userId, userName, emoteId, emoteName, timestamp, cost}] — cap 500
-    userModeration: {},      // {userId: {type:'ban'|'mute'|'block', until:timestamp|null, name:string}}
-    // v1.5.0
+    emoteHistory: [],
+    userModeration: {},
     toastEnabled: true,
-    // v1.5.1
     setEmoteSort: 'default',
-    // v1.5.2
     language: 'ru',
-    // v1.5.3 advanced mode chat messages (empty = use default)
     chatMsgSuccess: '',
     chatMsgFail: '',
     chatMsgDuplicate: ''
 };
 
-let sessionCount = 0; // сбрасывается при перезагрузке, не сохраняется
+let sessionCount = 0;
 
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 
@@ -249,7 +243,6 @@ function loadState() {
             document.getElementById('toast-toggle').checked = state.toastEnabled;
         }
         if (!state.language) state.language = 'ru';
-        // Миграция: activeEmote → activeEmotes
         if (state.activeEmote && !state.activeEmotes?.length) {
             state.activeEmotes = [state.activeEmote];
             delete state.activeEmote;
@@ -261,7 +254,6 @@ function loadState() {
             document.getElementById('slots-unlimited').checked = true;
             document.getElementById('max-emote-slots').disabled = true;
         }
-        // Beta state
         if (!Array.isArray(state.emoteHistory)) state.emoteHistory = [];
         if (!state.userModeration || typeof state.userModeration !== 'object') state.userModeration = {};
         if (state.betaEnabled) {
@@ -270,7 +262,6 @@ function loadState() {
             updateBetaButton(true);
             renderDashboard();
         }
-        // v1.5.3 — populate advanced mode inputs
         if (state.chatMsgSuccess) {
             const el = document.getElementById('chat-msg-success');
             if (el) el.value = state.chatMsgSuccess;
@@ -300,12 +291,10 @@ function saveState() {
         sendChatMessages: state.sendChatMessages,
         toastEnabled: state.toastEnabled,
         language: state.language,
-        // beta
         betaEnabled: state.betaEnabled,
         rewardCost: state.rewardCost,
         emoteHistory: state.emoteHistory,
         userModeration: state.userModeration,
-        // v1.5.3
         chatMsgSuccess: state.chatMsgSuccess,
         chatMsgFail: state.chatMsgFail,
         chatMsgDuplicate: state.chatMsgDuplicate
@@ -313,11 +302,9 @@ function saveState() {
 }
 
 function initListeners() {
-    // Auth
     document.getElementById('btn-login').addEventListener('click', handleLogin);
     document.getElementById('btn-logout').addEventListener('click', handleLogout);
 
-    // 7TV token
     document.getElementById('btn-save-token').addEventListener('click', saveSeventvToken);
     document.getElementById('seventv-token').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') saveSeventvToken();
@@ -338,14 +325,12 @@ function initListeners() {
         renderSetEmotesPage();
     });
 
-    // Scroll top
     const btnScrollTop = document.getElementById('btn-scroll-top');
     window.addEventListener('scroll', () => {
         btnScrollTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
     });
     btnScrollTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    // Log filter
     document.getElementById('log-filter').addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase();
         document.querySelectorAll('#event-log .log-entry').forEach(entry => {
@@ -353,7 +338,6 @@ function initListeners() {
         });
     });
 
-    // Rewards
     document.getElementById('btn-create-reward').addEventListener('click', handleCreateReward);
     document.getElementById('send-chat-messages').addEventListener('change', (e) => {
         state.sendChatMessages = e.target.checked;
@@ -390,7 +374,6 @@ function initListeners() {
         updateActiveEmotesDisplay();
     });
 
-    // Advanced Mode toggle
     document.getElementById('btn-advanced-toggle').addEventListener('click', () => {
         const content = document.getElementById('advanced-mode-content');
         const arrow = document.querySelector('#btn-advanced-toggle .advanced-arrow');
@@ -398,7 +381,6 @@ function initListeners() {
         content.classList.toggle('open');
         arrow.textContent = isOpen ? '▼' : '▲';
     });
-    // Advanced Mode inputs
     const advancedInputs = { 'chat-msg-success': 'chatMsgSuccess', 'chat-msg-fail': 'chatMsgFail', 'chat-msg-duplicate': 'chatMsgDuplicate' };
     Object.entries(advancedInputs).forEach(([id, key]) => {
         document.getElementById(id).addEventListener('input', (e) => {
@@ -407,13 +389,11 @@ function initListeners() {
         });
     });
 
-    // Search
     document.getElementById('btn-search-emote').addEventListener('click', () => handleSearchEmote(true));
     document.getElementById('emote-search').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleSearchEmote(true);
     });
 
-    // Log
     document.getElementById('btn-clear-log').addEventListener('click', (e) => {
         e.stopPropagation();
         document.getElementById('event-log').innerHTML = '';
@@ -424,7 +404,6 @@ function initListeners() {
         collapse.classList.toggle('collapsed');
     });
 
-    // Info modal
     const modal = document.getElementById('info-modal');
     document.getElementById('btn-info').addEventListener('click', () => {
         modal.style.display = 'flex';
@@ -436,7 +415,6 @@ function initListeners() {
         if (e.target === modal) modal.style.display = 'none';
     });
 
-    // Changelog modal
     const changelog = document.getElementById('changelog-modal');
     document.getElementById('btn-changelog').addEventListener('click', () => {
         changelog.style.display = 'flex';
@@ -448,13 +426,11 @@ function initListeners() {
         if (e.target === changelog) changelog.style.display = 'none';
     });
 
-    // Collapsible v2.0.0β entry
     document.getElementById('cl-toggle-beta').addEventListener('click', () => {
         document.getElementById('cl-body-beta').classList.toggle('collapsed');
         document.getElementById('cl-entry-beta').classList.toggle('cl-collapsed');
     });
 
-    // Version archive
     const versionArchiveModal = document.getElementById('version-archive-modal');
     document.getElementById('btn-version-archive').addEventListener('click', () => {
         document.getElementById('info-modal').style.display = 'none';
@@ -468,7 +444,6 @@ function initListeners() {
         if (e.target === versionArchiveModal) versionArchiveModal.style.display = 'none';
     });
 
-    // Beta modal
     const betaModal = document.getElementById('beta-modal');
     document.getElementById('btn-close-beta-modal').addEventListener('click', () => {
         betaModal.style.display = 'none';
@@ -483,7 +458,6 @@ function initListeners() {
         activateBeta(true);
     });
 
-    // Beta info modal (WIP) - click on changelog badge
     const betaInfoModal = document.getElementById('beta-info-modal');
     document.querySelector('.badge-clickable')?.addEventListener('click', () => {
         betaInfoModal.style.display = 'flex';
@@ -495,7 +469,6 @@ function initListeners() {
         if (e.target === betaInfoModal) betaInfoModal.style.display = 'none';
     });
 
-    // Dashboard tabs
     document.querySelectorAll('.dash-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
@@ -505,12 +478,10 @@ function initListeners() {
         });
     });
 
-    // History filter
     document.getElementById('history-filter').addEventListener('input', () => {
         if (state.betaEnabled) renderHistoryTab();
     });
 
-    // Clear history
     document.getElementById('btn-clear-history').addEventListener('click', () => {
         state.emoteHistory = [];
         saveState();
@@ -518,7 +489,6 @@ function initListeners() {
         log('История очищена', 'info');
     });
 
-    // Mod modal
     const modModal = document.getElementById('mod-modal');
     document.getElementById('btn-close-mod-modal').addEventListener('click', () => {
         modModal.style.display = 'none';
@@ -527,10 +497,11 @@ function initListeners() {
         if (e.target === modModal) modModal.style.display = 'none';
     });
 
-    // History list event delegation for mod buttons
     document.getElementById('history-list').addEventListener('click', handleHistoryClick);
 
-    // Logo easter egg
+    // Делегирование кликов в списке наград
+    document.getElementById('rewards-container').addEventListener('click', handleRewardsContainerClick);
+
     document.querySelector('.logo').addEventListener('click', triggerLogoBurst);
 
     handleAuthCallback();
@@ -670,7 +641,6 @@ function updateAuthUI(authed) {
 
 async function saveSeventvToken() {
     const raw = document.getElementById('seventv-token').value.trim();
-    // Убираем "Bearer " если пользователь скопировал с ним
     const token = raw.replace(/^Bearer\s+/i, '');
     const statusEl = document.getElementById('token-status');
 
@@ -684,7 +654,6 @@ async function saveSeventvToken() {
     document.getElementById('seventv-token').value = token;
     saveState();
 
-    // Проверяем токен — делаем тестовый GQL запрос
     statusEl.innerHTML = '<span class="loader"></span>';
     try {
         const res = await fetch(`${CONFIG.SERVER_URL}/api/7tv/gql`, {
@@ -696,7 +665,6 @@ async function saveSeventvToken() {
                 seventvToken: token
             })
         });
-        // Даже если запрос "ошибочный" (user не найден) — главное что сервер ответил, а не 401
         if (res.status === 401 || res.status === 403) {
             throw new Error('Невалидный токен');
         }
@@ -727,7 +695,6 @@ async function load7TVUserData() {
         select.innerHTML = '';
 
         if (emoteSets.length === 0) {
-            // fallback: use the active set from connection
             if (data.emote_set) {
                 const opt = document.createElement('option');
                 opt.value = data.emote_set.id;
@@ -753,7 +720,6 @@ async function load7TVUserData() {
 
         select.disabled = false;
 
-        // Авто-выбор сохранённого или активного набора
         if (state.emoteSetId) {
             select.value = state.emoteSetId;
         } else if (activeSetId) {
@@ -799,7 +765,6 @@ async function handleSaveEmoteSet() {
     state.emoteSetId = id;
     saveState();
 
-    // Обновляем select если есть такой вариант
     const select = document.getElementById('emote-set-select');
     if (select.querySelector(`option[value="${id}"]`)) {
         select.value = id;
@@ -1033,7 +998,6 @@ function selectEmote(emote) {
     state.selectedEmote = emote;
     log(`Выбран: ${emote.name}`, 'info');
 
-    // Убираем выделение с предыдущего
     document.querySelectorAll('.emote-item.selected').forEach(el => el.classList.remove('selected'));
 
     const activeSection = document.getElementById('active-emote');
@@ -1062,16 +1026,14 @@ async function addEmoteToSet(emote) {
         return;
     }
 
-    // Обновляем набор перед проверкой дубликатов
     try {
         const freshRes = await fetch(`${CONFIG.SEVENTV_API_BASE}/emote-sets/${state.emoteSetId}`);
         if (freshRes.ok) {
             const freshData = await freshRes.json();
             state.allSetEmotes = freshData.emotes || [];
         }
-    } catch (_) { /* используем кэш */ }
+    } catch (_) {}
 
-    // Проверка дубликатов в наборе
     const duplicateById = state.allSetEmotes.find(e => e.id === emote.id);
     if (duplicateById) {
         log(`Эмоут "${emote.name}" уже есть в наборе!`, 'warning');
@@ -1079,7 +1041,6 @@ async function addEmoteToSet(emote) {
     }
 
     try {
-        // Удаляем самые старые эмоуты если очередь заполнена (и слоты включены)
         if (!state.slotsDisabled) {
             while (state.activeEmotes.length >= state.maxEmoteSlots) {
                 const oldest = state.activeEmotes.shift();
@@ -1094,10 +1055,8 @@ async function addEmoteToSet(emote) {
             }
         }
 
-        // Убираем дубликат из очереди если уже есть
         state.activeEmotes = state.activeEmotes.filter(e => e.id !== emote.id);
 
-        // Добавляем новый — с ретраем при конфликте имён
         log(`Добавление: ${emote.name}...`, 'info');
         let addedName = emote.name;
         let success = false;
@@ -1114,7 +1073,7 @@ async function addEmoteToSet(emote) {
                     log(`Имя "${nameToUse}" занято, пробую "${emote.name}_${attempt + 2}"...`, 'warning');
                     continue;
                 }
-                throw err; // другая ошибка или последняя попытка
+                throw err;
             }
         }
 
@@ -1233,7 +1192,6 @@ async function loadChannelRewards() {
         state.rewardsPage = 1;
         renderRewardsPage();
 
-        // Если уже есть выбранная награда — показать и запустить слушатель
         if (state.rewardId) {
             const selected = state.allRewards.find(r => r.id === state.rewardId);
             if (selected) {
@@ -1268,16 +1226,30 @@ function renderRewardsPage() {
     container.innerHTML = '';
     pageRewards.forEach(reward => {
         const el = document.createElement('div');
-        el.className = 'reward-item clickable';
+        el.className = 'reward-item';
         if (state.rewardId === reward.id) el.classList.add('selected');
+        el.dataset.rewardId = reward.id;
         el.innerHTML = `
-            <div class="reward-info">
+            <div class="reward-info reward-info-clickable" data-action="select" data-reward-id="${reward.id}">
                 <h4>${reward.title}</h4>
                 <p>${reward.is_enabled ? 'Активна' : 'Неактивна'}${reward.is_user_input_required ? ' | Требует ввод' : ''}</p>
             </div>
-            <span class="reward-cost">${reward.cost} pts</span>
+            <div class="reward-actions">
+                <span class="reward-cost">${reward.cost} pts</span>
+                <button class="btn btn-icon btn-sm reward-btn-update" data-action="update" data-reward-id="${reward.id}" title="Обновить награду">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"/>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                    </svg>
+                </button>
+                <button class="btn btn-icon btn-sm reward-btn-delete" data-action="delete" data-reward-id="${reward.id}" title="Удалить награду">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
+            </div>
         `;
-        el.addEventListener('click', () => selectReward(reward));
         container.appendChild(el);
     });
 
@@ -1287,6 +1259,26 @@ function renderRewardsPage() {
     });
 
     if (state.rewardsPage === 1) log(`Наград: ${rewards.length}`, 'info');
+}
+
+function handleRewardsContainerClick(e) {
+    const target = e.target.closest('[data-action]');
+    if (!target) return;
+
+    const action = target.dataset.action;
+    const rewardId = target.dataset.rewardId;
+    const reward = state.allRewards.find(r => r.id === rewardId);
+    if (!reward) return;
+
+    if (action === 'select') {
+        selectReward(reward);
+    } else if (action === 'update') {
+        e.stopPropagation();
+        handleUpdateReward(reward);
+    } else if (action === 'delete') {
+        e.stopPropagation();
+        handleDeleteReward(reward);
+    }
 }
 
 function selectReward(reward) {
@@ -1360,6 +1352,76 @@ async function handleCreateReward() {
     }
 }
 
+async function handleUpdateReward(reward) {
+    const title = document.getElementById('reward-title').value.trim() || reward.title;
+    const cost = parseInt(document.getElementById('reward-cost').value) || reward.cost;
+    const prompt = document.getElementById('reward-prompt').value.trim();
+
+    log(`Обновление награды "${reward.title}"...`, 'info');
+
+    try {
+        const res = await fetch(`${CONFIG.SERVER_URL}/api/twitch/rewards/${reward.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                token: state.twitchToken,
+                broadcasterId: state.broadcasterId,
+                title,
+                cost,
+                prompt: prompt || undefined
+            })
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Ошибка обновления награды');
+        }
+
+        log(`Награда "${title}" обновлена`, 'success');
+        showToast(`Награда "${title}" обновлена`, 'success');
+        await loadChannelRewards();
+    } catch (err) {
+        log(`Ошибка обновления: ${err.message}`, 'error');
+        showToast(`Ошибка: ${err.message}`, 'error');
+    }
+}
+
+async function handleDeleteReward(reward) {
+    if (!confirm(`Удалить награду "${reward.title}"? Это действие нельзя отменить.`)) return;
+
+    log(`Удаление награды "${reward.title}"...`, 'info');
+
+    try {
+        const res = await fetch(
+            `${CONFIG.SERVER_URL}/api/twitch/rewards/${reward.id}?token=${state.twitchToken}&broadcasterId=${state.broadcasterId}`,
+            { method: 'DELETE' }
+        );
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Ошибка удаления награды');
+        }
+
+        if (state.rewardId === reward.id) {
+            state.rewardId = null;
+            state.rewardCost = 0;
+            document.getElementById('selected-reward-info').style.display = 'none';
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        }
+
+        saveState();
+        log(`Награда "${reward.title}" удалена`, 'success');
+        showToast(`Награда "${reward.title}" удалена`, 'info');
+        await loadChannelRewards();
+    } catch (err) {
+        log(`Ошибка удаления: ${err.message}`, 'error');
+        showToast(`Ошибка: ${err.message}`, 'error');
+    }
+}
+
 // ==================== СЛУШАТЕЛЬ НАГРАД ====================
 
 let pollingInterval = null;
@@ -1394,7 +1456,6 @@ async function checkNewRedemptions() {
             await processRedemption(r);
         }
     } catch (_) {
-        // тихий polling
     } finally {
         isPolling = false;
     }
@@ -1404,7 +1465,6 @@ async function processRedemption(redemption) {
     const userName = redemption.user_name || redemption.user?.display_name || 'Unknown';
     const userInput = (redemption.user_input || '').trim();
 
-    // Проверка модерации
     const mod = state.userModeration[redemption.user_id];
     if (mod) {
         if (mod.type === 'block' || (mod.type === 'ban' && mod.until && Date.now() < mod.until)) {
@@ -1412,7 +1472,6 @@ async function processRedemption(redemption) {
             await markRedemptionStatus(redemption.id, 'CANCELED');
             return;
         }
-        // Убираем истекшие баны
         if (mod.type === 'ban' && mod.until && Date.now() >= mod.until) {
             delete state.userModeration[redemption.user_id];
             saveState();
@@ -1450,7 +1509,6 @@ async function processRedemption(redemption) {
         const result = await addEmoteToSet(emote);
 
         if (result === true) {
-            // Запись в историю
             state.emoteHistory.unshift({
                 id: crypto.randomUUID(),
                 userId: redemption.user_id,
@@ -1560,7 +1618,6 @@ async function markRedemptionStatus(redemptionId, status) {
     }
 }
 
-
 // ==================== БЕТА v2.0.0β ====================
 
 function applyVersionDisplay(version) {
@@ -1572,8 +1629,6 @@ function applyVersionDisplay(version) {
 }
 
 function updateBetaButton(active) {
-    // Кнопка теперь в архиве версий, не в changelog
-    // Стилизуем иконку архива если бета активна
     const archiveBtn = document.getElementById('btn-version-archive');
     if (archiveBtn) {
         archiveBtn.style.color = active ? 'var(--purple-hover)' : '';
@@ -1592,7 +1647,6 @@ function activateBeta(reauth = false) {
     log('Бета v2.0.0β активирована!', 'success');
 
     if (reauth) {
-        // Добавляем channel:moderate и перерегистрируемся
         const scopesWithMod = CONFIG.SCOPES + ' channel:moderate';
         const url = `https://id.twitch.tv/oauth2/authorize` +
             `?client_id=${CONFIG.TWITCH_CLIENT_ID}` +
@@ -1606,7 +1660,7 @@ function activateBeta(reauth = false) {
 function deactivateBeta() {
     state.betaEnabled = false;
     saveState();
-    applyVersionDisplay('v1.5.4');
+    applyVersionDisplay('v1.5.5');
     updateBetaButton(false);
     document.getElementById('dashboard-section').style.display = 'none';
     log('Бета деактивирована', 'info');
@@ -1678,7 +1732,6 @@ function renderStatsTab() {
     document.getElementById('stat-total-emotes').textContent = totalEmotes;
     document.getElementById('stat-unique-users').textContent = uniqueUsers;
 
-    // Лидерборд
     const userStats = {};
     history.forEach(h => {
         if (!userStats[h.userId]) {
@@ -1710,7 +1763,7 @@ function renderStatsTab() {
 
 // ==================== МОДЕРАЦИЯ ====================
 
-let pendingModAction = null; // {action, userId, userName}
+let pendingModAction = null;
 
 function handleHistoryClick(e) {
     const btn = e.target.closest('[data-action]');
@@ -1730,7 +1783,6 @@ function handleHistoryClick(e) {
         return;
     }
 
-    // ban / mute — показываем выбор длительности
     pendingModAction = { action, userId, userName };
     openModModal(action, userName);
 }
@@ -1746,7 +1798,7 @@ function openModModal(action, userName) {
     user.textContent = userName;
     desc.textContent = action === 'ban'
         ? 'Заблокировать добавление эмоутов на выбранный период'
-        : 'Замутить в чате Twitch на выбранный период';
+        : 'Замутить в Twitch-чате на выбранный период';
 
     const durations = [
         { label: '1 мин', seconds: 60 },
@@ -1761,7 +1813,6 @@ function openModModal(action, userName) {
         ${durations.map(d => `<button class="duration-btn" data-seconds="${d.seconds}">${d.label}</button>`).join('')}
     </div>`;
 
-    // Обработчики длительности
     content.querySelectorAll('.duration-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const seconds = parseInt(btn.dataset.seconds);
@@ -1872,7 +1923,6 @@ const VERSION_ARCHIVE = [
         },
         isActive: () => state.betaEnabled
     }
-    // Можно добавлять новые версии сюда в будущем
 ];
 
 function renderVersionArchive() {
@@ -1897,7 +1947,6 @@ function renderVersionArchive() {
         </div>`;
     }).join('');
 
-    // Event delegation
     container.querySelectorAll('[data-va-action]').forEach(btn => {
         btn.addEventListener('click', () => {
             const id = btn.dataset.vaId;
@@ -1916,10 +1965,7 @@ let floatingInterval = null;
 
 function startFloatingEmotes() {
     if (floatingInterval) clearInterval(floatingInterval);
-
-    // Спавним каждые 2-4 секунды
     floatingInterval = setInterval(spawnFloatingEmote, 3000);
-    // Сразу несколько
     setTimeout(spawnFloatingEmote, 500);
     setTimeout(spawnFloatingEmote, 1500);
 }
@@ -1931,7 +1977,6 @@ function spawnFloatingEmote() {
     const container = document.getElementById('floating-emotes');
     if (!container) return;
 
-    // Ограничиваем кол-во одновременных
     if (container.children.length > 15) return;
 
     const randomEmote = emotes[Math.floor(Math.random() * emotes.length)];
@@ -1942,19 +1987,15 @@ function spawnFloatingEmote() {
     img.width = 48;
     img.height = 48;
 
-    // Рандомная позиция по X
     img.style.left = Math.random() * 90 + 5 + '%';
-    // Рандомная длительность
-    const duration = 10 + Math.random() * 10; // 10-20 sec
+    const duration = 10 + Math.random() * 10;
     img.style.setProperty('--float-duration', duration + 's');
-    // Рандомный размер
     const scale = 0.6 + Math.random() * 0.8;
     img.style.width = (48 * scale) + 'px';
     img.style.height = (48 * scale) + 'px';
 
     container.appendChild(img);
 
-    // Удаляем после анимации
     setTimeout(() => {
         if (img.parentNode) img.remove();
     }, duration * 1000 + 500);
@@ -1970,9 +2011,8 @@ function triggerLogoBurst() {
     _burstActive = true;
     const logo = document.querySelector('.logo');
     const DURATION = 5000;
-    const STEP = 150; // ms между буквами
+    const STEP = 150;
 
-    // Разбиваем на отдельные буквы с сохранением цветов
     logo.innerHTML =
         [...'7TV'].map(c => `<span class="logo-char logo-char-purple">${c}</span>`).join('') +
         [...'Rewards'].map(c => `<span class="logo-char logo-char-teal">${c}</span>`).join('');
@@ -2035,33 +2075,25 @@ function applyTranslations() {
         if (el && T[key] !== undefined) el.placeholder = T[key];
     };
 
-    // data-i18n: textContent
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
         if (T[key] !== undefined) el.textContent = T[key];
     });
-    // data-i18n-placeholder
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.dataset.i18nPlaceholder;
         if (T[key] !== undefined) el.placeholder = T[key];
     });
 
-    // Header
     set('.subtitle', 'subtitle');
-
-    // Auth
     set('#auth-section .card-header h2', 'auth.title');
     set('#btn-logout', 'auth.logout');
     set('.user-role', 'auth.role');
-
-    // 7TV Settings
     set('#seventv-section .card-header h2', 'seventv.title');
     const lbl7tvToken = document.querySelector('label[for="seventv-token"]');
     if (lbl7tvToken) lbl7tvToken.textContent = T['seventv.token.label'];
     set('#btn-save-token', 'seventv.token.save');
     const lblEmoteSet = document.querySelector('label[for="emote-set-select"]');
     if (lblEmoteSet) lblEmoteSet.textContent = T['seventv.set.label'];
-    // Manual ID label has data-i18n already
     setPH('emote-set-id', 'seventv.set.placeholder');
     set('#btn-save-set', 'seventv.set.load');
     set('#current-emotes .section-header h3', 'seventv.emotes.title');
@@ -2074,8 +2106,6 @@ function applyTranslations() {
     }
     const firstOpt = document.querySelector('#emote-set-select option[value=""]');
     if (firstOpt) firstOpt.text = T['seventv.set.first'];
-
-    // Rewards
     set('#rewards-section .card-header h2', 'reward.title');
     const lblName = document.querySelector('label[for="reward-title"]');
     if (lblName) lblName.textContent = T['reward.name'];
@@ -2083,22 +2113,16 @@ function applyTranslations() {
     if (lblCost) lblCost.textContent = T['reward.cost'];
     const lblDesc = document.querySelector('label[for="reward-prompt"]');
     if (lblDesc) lblDesc.textContent = T['reward.desc'];
-    // slots label has data-i18n; checkbox spans have data-i18n — handled above
-    // slots-hint: re-apply depending on unlimited state
     const slotsHint = document.getElementById('slots-hint');
     if (slotsHint) slotsHint.textContent = state.slotsDisabled ? T['reward.slots.hint.unlimited'] : T['reward.slots.hint'];
     set('#rewards-list .section-header h3', 'reward.existing');
     const existHint = document.querySelector('#rewards-list .section-header .form-hint');
     if (existHint) existHint.textContent = T['reward.existing.hint'];
     set('#selected-reward-info h3', 'reward.tracked');
-
-    // Emote management
     set('#emote-management .card-header h2', 'emote.search.title');
     setPH('emote-search', 'emote.search.placeholder');
     set('#btn-search-emote', 'emote.search.btn');
     set('#active-emote h3', 'emote.active');
-
-    // Dashboard
     set('#dashboard-section h2', 'dash.title');
     set('#btn-clear-history', 'dash.clear');
     const histTab = document.querySelector('.dash-tab[data-tab="history"]');
@@ -2113,16 +2137,10 @@ function applyTranslations() {
     const statUsers = document.getElementById('stat-unique-users');
     if (statUsers?.nextElementSibling) statUsers.nextElementSibling.textContent = T['dash.users'];
     set('.leaderboard-title', 'dash.top');
-
-    // Log
     set('#log-section h2', 'log.title');
     set('#btn-clear-log', 'log.clear');
     setPH('log-filter', 'log.filter');
-
-    // Troubleshooting
     set('.troubleshooting-title h3', 'ts.title');
-
-    // Info modal
     set('#info-modal .modal-header h2', 'info.title');
     set('#info-modal .modal-desc', 'info.desc');
     const credH = document.querySelectorAll('.modal-credits h3');
@@ -2130,33 +2148,21 @@ function applyTranslations() {
     if (credH[1]) credH[1].textContent = T['info.for'];
     if (credH[2]) credH[2].textContent = T['info.thanks'];
     set('.modal-donate > p', 'info.donate');
-
-    // Changelog modal
     set('#changelog-modal .modal-header h2', 'changelog.title');
-
-    // Token hint (contains HTML links/code tags)
     const tokenHint = document.getElementById('token-hint');
     if (tokenHint) tokenHint.innerHTML = T['token.hint'];
-
-    // Auth status badge (static initial state only — don't override dynamic state)
     const authStatus = document.getElementById('auth-status');
     if (authStatus && authStatus.classList.contains('badge-warning')) {
         authStatus.textContent = T['auth.status.not'];
     }
-
-    // 7TV status badge (static initial state only)
     const stvStatus = document.getElementById('seventv-status');
     if (stvStatus && stvStatus.classList.contains('badge-warning')) {
         stvStatus.textContent = T['seventv.status.init'];
     }
-
-    // Initial log entry (only if it's still the default placeholder)
     const firstLog = document.querySelector('#event-log .log-entry');
     if (firstLog && firstLog.querySelector('.log-time')?.textContent === '[--:--:--]') {
         firstLog.childNodes[firstLog.childNodes.length - 1].textContent = ' ' + T['log.waiting'];
     }
-
-    // Sync lang toggle buttons
     const lang = state.language || 'ru';
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);

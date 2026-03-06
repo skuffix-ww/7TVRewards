@@ -96,6 +96,20 @@ body {
     margin-top: 4px;
 }
 
+.modal-status-frozen {
+    text-align: center;
+    color: var(--red);
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    padding: 6px 12px;
+    background: rgba(235, 4, 0, 0.1);
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    width: 100%;
+}
+
 .btn-archive {
     display: inline-flex;
     align-items: center;

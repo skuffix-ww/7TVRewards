@@ -32,7 +32,6 @@ function log(message, type = 'info') {
 
 // ==================== 7TV API ====================
 
-// Поиск эмоутов
 app.get('/api/7tv/emotes/search', async (req, res) => {
     try {
         const { query, limit = 20, page = 1 } = req.query;
@@ -47,7 +46,6 @@ app.get('/api/7tv/emotes/search', async (req, res) => {
     }
 });
 
-// Получение набора эмоутов
 app.get('/api/7tv/emote-sets/:setId', async (req, res) => {
     try {
         const { setId } = req.params;
@@ -60,7 +58,6 @@ app.get('/api/7tv/emote-sets/:setId', async (req, res) => {
     }
 });
 
-// Получение 7TV пользователя по Twitch ID
 app.get('/api/7tv/users/twitch/:twitchId', async (req, res) => {
     try {
         const { twitchId } = req.params;
@@ -73,7 +70,6 @@ app.get('/api/7tv/users/twitch/:twitchId', async (req, res) => {
     }
 });
 
-// 7TV GQL прокси (добавление/удаление эмоутов)
 app.post('/api/7tv/gql', async (req, res) => {
     try {
         const { operationName, query, variables, seventvToken } = req.body;
@@ -111,7 +107,6 @@ app.post('/api/7tv/gql', async (req, res) => {
 
 // ==================== TWITCH API ====================
 
-// Получение пользователя Twitch
 app.get('/api/twitch/users', async (req, res) => {
     try {
         const { token } = req.query;
@@ -129,7 +124,6 @@ app.get('/api/twitch/users', async (req, res) => {
     }
 });
 
-// Создание награды
 app.post('/api/twitch/rewards', async (req, res) => {
     try {
         const { token, broadcasterId, title, cost, prompt, is_user_input_required } = req.body;
@@ -159,7 +153,6 @@ app.post('/api/twitch/rewards', async (req, res) => {
         if (!response.ok) {
             const errorText = await response.text();
             log(`Twitch API Error: ${errorText}`, 'error');
-            // Прокидываем оригинальную ошибку Twitch (включая DUPLICATE_REWARD)
             return res.status(response.status).json({ error: errorText });
         }
 
@@ -171,7 +164,6 @@ app.post('/api/twitch/rewards', async (req, res) => {
     }
 });
 
-// Получение наград
 app.get('/api/twitch/rewards', async (req, res) => {
     try {
         const { token, broadcasterId } = req.query;
@@ -192,7 +184,76 @@ app.get('/api/twitch/rewards', async (req, res) => {
     }
 });
 
-// Обновление статуса активации награды (PATCH!)
+app.patch('/api/twitch/rewards/:rewardId', async (req, res) => {
+    try {
+        const { rewardId } = req.params;
+        const { token, broadcasterId, title, cost, prompt } = req.body;
+
+        log(`Updating reward: ${rewardId}`);
+
+        const body = {};
+        if (title !== undefined) body.title = title;
+        if (cost !== undefined) body.cost = cost;
+        if (prompt !== undefined) body.prompt = prompt;
+
+        const response = await fetch(
+            `${CONFIG.TWITCH_API_BASE}/channel_points/custom_rewards?broadcaster_id=${broadcasterId}&id=${rewardId}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Client-Id': CONFIG.TWITCH_CLIENT_ID,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            }
+        );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            log(`Twitch PATCH reward error: ${errorText}`, 'error');
+            return res.status(response.status).json({ error: errorText });
+        }
+
+        const data = await response.json();
+        log(`Reward updated: ${rewardId}`);
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/twitch/rewards/:rewardId', async (req, res) => {
+    try {
+        const { rewardId } = req.params;
+        const { token, broadcasterId } = req.query;
+
+        log(`Deleting reward: ${rewardId}`);
+
+        const response = await fetch(
+            `${CONFIG.TWITCH_API_BASE}/channel_points/custom_rewards?broadcaster_id=${broadcasterId}&id=${rewardId}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Client-Id': CONFIG.TWITCH_CLIENT_ID
+                }
+            }
+        );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            log(`Twitch DELETE reward error: ${errorText}`, 'error');
+            return res.status(response.status).json({ error: errorText });
+        }
+
+        log(`Reward deleted: ${rewardId}`);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.patch('/api/twitch/rewards/redemptions', async (req, res) => {
     try {
         const { token, broadcasterId, rewardId, redemptionId, status } = req.body;
@@ -225,7 +286,6 @@ app.patch('/api/twitch/rewards/redemptions', async (req, res) => {
     }
 });
 
-// Получение невыполненных активаций
 app.get('/api/twitch/rewards/redemptions', async (req, res) => {
     try {
         const { token, broadcasterId, rewardId } = req.query;
@@ -250,7 +310,6 @@ app.get('/api/twitch/rewards/redemptions', async (req, res) => {
     }
 });
 
-// Отправка сообщения в чат
 app.post('/api/twitch/chat/messages', async (req, res) => {
     try {
         const { token, broadcasterId, senderId, message } = req.body;
@@ -286,7 +345,6 @@ app.post('/api/twitch/chat/messages', async (req, res) => {
 
 // ==================== TWITCH MODERATION ====================
 
-// Мут/бан пользователя в чате
 app.post('/api/twitch/moderation/ban', async (req, res) => {
     try {
         const { token, broadcasterId, moderatorId, userId, duration, reason } = req.body;

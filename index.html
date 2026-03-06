@@ -8,6 +8,39 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .reward-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .reward-info-clickable {
+            flex: 1;
+            cursor: pointer;
+        }
+        .reward-item {
+            cursor: default;
+        }
+        .reward-btn-update {
+            color: var(--text-muted) !important;
+            border-color: var(--border) !important;
+        }
+        .reward-btn-update:hover {
+            color: var(--teal) !important;
+            border-color: var(--teal) !important;
+            background: var(--teal-dim) !important;
+        }
+        .reward-btn-delete {
+            color: var(--text-muted) !important;
+            border-color: var(--border) !important;
+        }
+        .reward-btn-delete:hover {
+            color: var(--red) !important;
+            border-color: var(--red) !important;
+            background: rgba(235,4,0,0.1) !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -70,7 +103,7 @@
                 <div class="modal-body">
                     <div class="modal-logo">7TV<span>Rewards</span></div>
                     <div class="modal-version-row">
-                        <p class="modal-version" id="modal-version">v1.5.4</p>
+                        <p class="modal-version" id="modal-version">v1.5.5</p>
                         <button id="btn-version-archive" class="btn-archive" title="Архив версий">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -184,6 +217,19 @@
                         <span class="cl-legend cl-change" data-i18n="cl.change">Изменение</span>
                         <span class="cl-legend cl-info" data-i18n="cl.info">Инфо</span>
                     </div>
+
+                    <!-- v1.5.5 -->
+                    <div class="changelog-entry">
+                        <div class="changelog-version">
+                            <span class="badge badge-info">v1.5.5</span>
+                            <span class="changelog-date">07.03.2026</span>
+                        </div>
+                        <ul class="changelog-list">
+                            <li class="cl-new">Кнопка обновления награды (↻) — применяет текущие поля формы (название, стоимость, описание) к выбранной награде</li>
+                            <li class="cl-new">Кнопка удаления награды (✕) — удаляет награду с подтверждением, автоматически останавливает слушатель если была активной</li>
+                        </ul>
+                    </div>
+
                     <div class="changelog-entry changelog-entry-collapsible cl-collapsed" id="cl-entry-beta">
                         <div class="changelog-version changelog-toggle" id="cl-toggle-beta">
                             <button class="badge badge-beta badge-clickable" title="Подробнее о бета-версии">v2.0.0β</button>
@@ -692,8 +738,8 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg>
                                 </div>
                                 <div class="ts-item-body">
-                                    <strong id="ts-1-title">Токен 7TV истёк</strong>
-                                    <p id="ts-1-desc">Зайдите на <a href="https://7tv.app" target="_blank">7tv.app</a> → F12 → Network → обновите страницу → скопируйте заголовок <code>Authorization</code> из запроса к <code>7tv.io</code> (без «Bearer »).</p>
+                                    <strong>Токен 7TV истёк</strong>
+                                    <p>Зайдите на <a href="https://7tv.app" target="_blank">7tv.app</a> → F12 → Network → обновите страницу → скопируйте заголовок <code>Authorization</code> из запроса к <code>7tv.io</code> (без «Bearer »).</p>
                                 </div>
                             </div>
                             <div class="ts-item">
@@ -701,8 +747,8 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                                 </div>
                                 <div class="ts-item-body">
-                                    <strong id="ts-2-title">7TV недоступен в регионе</strong>
-                                    <p id="ts-2-desc">Включите VPN или прокси и смените регион. Если сайт открывается, но API не отвечает — проблема скорее всего в блокировке на уровне провайдера.</p>
+                                    <strong>7TV недоступен в регионе</strong>
+                                    <p>Включите VPN или прокси и смените регион. Если сайт открывается, но API не отвечает — проблема скорее всего в блокировке на уровне провайдера.</p>
                                 </div>
                             </div>
                             <div class="ts-item">
@@ -710,8 +756,8 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                                 </div>
                                 <div class="ts-item-body">
-                                    <strong id="ts-3-title">Набор эмоутов не загружается</strong>
-                                    <p id="ts-3-desc">Выберите набор из выпадающего списка — если 7TV привязан к Twitch-аккаунту, он подтянется автоматически. Или введите ID набора вручную (скопируйте из URL на 7tv.app).</p>
+                                    <strong>Набор эмоутов не загружается</strong>
+                                    <p>Выберите набор из выпадающего списка — если 7TV привязан к Twitch-аккаунту, он подтянется автоматически. Или введите ID набора вручную (скопируйте из URL на 7tv.app).</p>
                                 </div>
                             </div>
                             <div class="ts-item">
@@ -719,8 +765,8 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                 </div>
                                 <div class="ts-item-body">
-                                    <strong id="ts-4-title">Эмоут не добавляется (conflicting name)</strong>
-                                    <p id="ts-4-desc">Эмоут с таким именем уже существует в наборе. Система автоматически добавит суффикс (_2, _3...). Если ошибка повторяется — удалите старый эмоут на 7tv.app вручную.</p>
+                                    <strong>Эмоут не добавляется (conflicting name)</strong>
+                                    <p>Эмоут с таким именем уже существует в наборе. Система автоматически добавит суффикс (_2, _3...). Если ошибка повторяется — удалите старый эмоут на 7tv.app вручную.</p>
                                 </div>
                             </div>
                             <div class="ts-item">
@@ -728,8 +774,8 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
                                 </div>
                                 <div class="ts-item-body">
-                                    <strong id="ts-5-title">Награда не срабатывает</strong>
-                                    <p id="ts-5-desc">Выберите награду из списка — это запускает слушатель (polling раз в 5 сек). Убедитесь что авторизация Twitch активна и зритель ввёл корректную ссылку на 7tv.app/emotes/...</p>
+                                    <strong>Награда не срабатывает</strong>
+                                    <p>Выберите награду из списка — это запускает слушатель (polling раз в 5 сек). Убедитесь что авторизация Twitch активна и зритель ввёл корректную ссылку на 7tv.app/emotes/...</p>
                                 </div>
                             </div>
                             <div class="ts-item">
@@ -737,8 +783,8 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                                 </div>
                                 <div class="ts-item-body">
-                                    <strong id="ts-6-title">Сайт ведёт себя странно / сбросить всё</strong>
-                                    <p id="ts-6-desc">F12 → Application → Local Storage → удалите ключ <code>7tv-rewards-state</code>. После обновления страницы всё сбросится до начального состояния.</p>
+                                    <strong>Сайт ведёт себя странно / сбросить всё</strong>
+                                    <p>F12 → Application → Local Storage → удалите ключ <code>7tv-rewards-state</code>. После обновления страницы всё сбросится до начального состояния.</p>
                                 </div>
                             </div>
                         </div>
@@ -751,13 +797,13 @@
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-divider"></div>
-        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.5.4</span></p>
-        <p class="footer-legal" id="footer-legal-1">Данный сервис не является официальным продуктом Twitch Interactive, Inc. или 7TV. Все
+        <p class="footer-brand">7TV<span>Rewards</span> &middot; <span id="footer-version">v1.5.5</span></p>
+        <p class="footer-legal">Данный сервис не является официальным продуктом Twitch Interactive, Inc. или 7TV. Все
             торговые марки принадлежат их владельцам. Twitch, логотип Twitch и Channel Points являются товарными знаками
             Twitch Interactive, Inc. 7TV является независимым сервисом эмоутов.</p>
-        <p class="footer-legal" id="footer-legal-2">Сервис предоставляется «как есть» (as is) без каких-либо гарантий. Разработчик не несёт
+        <p class="footer-legal">Сервис предоставляется «как есть» (as is) без каких-либо гарантий. Разработчик не несёт
             ответственности за возможные сбои, потерю данных или нарушение условий использования сторонних платформ.</p>
-        <p class="footer-legal" id="footer-legal-3">Используя данный сервис, вы соглашаетесь с <a
+        <p class="footer-legal">Используя данный сервис, вы соглашаетесь с <a
                 href="https://www.twitch.tv/p/legal/terms-of-service/" target="_blank">Условиями использования
                 Twitch</a> и <a href="https://7tv.app/tos" target="_blank">Условиями использования 7TV</a>.</p>
         <p class="footer-copy">&copy; 2026 skuffix-ww &middot; MIT License</p>
@@ -778,7 +824,7 @@
                 </button>
             </div>
             <div class="modal-body" style="text-align:left;">
-                <p id="archive-desc" style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;">Выберите версию для активации. В
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:16px;">Выберите версию для активации. В
                     будущем здесь будут доступны другие версии.</p>
                 <div id="version-archive-list" class="version-archive-list"></div>
             </div>
