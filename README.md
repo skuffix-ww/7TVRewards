@@ -229,8 +229,11 @@ npm run dev
 
 ---
 
-*Сделано для [lostidze](https://twitch.tv/lostidze) · by [skuffix-ww](https://github.com/skuffix-ww) · MIT License* *Помог:
+*Сделано для [lostidze](https://twitch.tv/lostidze) · by [skuffix-ww](https://github.com/skuffix-ww) · MIT License*
+   
+Помог:
 
 - <a
 href="https://claude.ai/"><img
-src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png" width="16" height"16"> Claude Code</a>
+src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png" width="16" height"16">
+Claude Code</a>
