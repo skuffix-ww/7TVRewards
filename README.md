@@ -235,5 +235,5 @@ npm run dev
 
 - <a
 href="https://claude.ai/"><img
-src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png" width="16" height"16">
+src="https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/light/claude-color.png" width="16" height="16">
 Claude Code</a>
